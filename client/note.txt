@@ -1,0 +1,2 @@
++ ng g s _services/account --dry-run => tao services
++ ng g s _services/account --skip-tests
