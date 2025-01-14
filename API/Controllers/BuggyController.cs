@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
-public class BuggyController(DataContext context): BaseApiController
+public class BuggyController(DataContext context) : BaseApiController
 {
     [Authorize]
     [HttpGet("auth")]
@@ -17,7 +17,7 @@ public class BuggyController(DataContext context): BaseApiController
     [HttpGet("not-found")]
     public ActionResult<AppUser> GetNotFound()
     {
-        var  thing = context.Users.Find(-1);
+        var thing = context.Users.Find(-1);
         if (thing == null) return NotFound();
         return thing;
     }
