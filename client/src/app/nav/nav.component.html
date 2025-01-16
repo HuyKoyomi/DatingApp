@@ -22,10 +22,10 @@
     </ul>
 
     @if (accountService.currentUser()){
-    <div dropdown class="dropdown" *ngIf="(accountService.currentUser$ | async) as user">
+    <div dropdown class="dropdown">
       <a dropdownToggle class="dropdown-toggle text-light text-decoration-none">
-        <!-- Welcome {{accountService.currentUser()?.username}} -->
-        Welcome {{user.username | titlecase }}
+        Welcome {{accountService.currentUser()?.username | titlecase}}
+        <!-- Welcome {{user.username | titlecase }} -->
       </a>
       <div *dropdownMenu class="dropdown-menu">
         <a class="dropdown-item">Edit profile</a>
