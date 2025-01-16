@@ -3,6 +3,7 @@ using System;
 using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250116022958_AddInterest")]
+    partial class AddInterest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.4");
@@ -123,16 +126,14 @@ namespace API.Data.Migrations
 
             modelBuilder.Entity("API.Entities.UserInterest", b =>
                 {
-                    b.Property<int>("AppUserId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("InterestId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Id")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("AppUserId", "InterestId");
+                    b.HasKey("Id");
 
                     b.HasIndex("InterestId");
 
@@ -152,19 +153,11 @@ namespace API.Data.Migrations
 
             modelBuilder.Entity("API.Entities.UserInterest", b =>
                 {
-                    b.HasOne("API.Entities.AppUser", "AppUser")
-                        .WithMany("UserInterests")
-                        .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("API.Entities.Interest", "Interest")
                         .WithMany("UserInterests")
                         .HasForeignKey("InterestId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("AppUser");
 
                     b.Navigation("Interest");
                 });
@@ -172,8 +165,6 @@ namespace API.Data.Migrations
             modelBuilder.Entity("API.Entities.AppUser", b =>
                 {
                     b.Navigation("Photos");
-
-                    b.Navigation("UserInterests");
                 });
 
             modelBuilder.Entity("API.Entities.Interest", b =>

@@ -32,4 +32,23 @@ public class Seed
         }
         await context.SaveChangesAsync(); // Lưu thay đổi vào cơ sở dữ liệu một cách bất đồng bộ.
     }
+
+    public static async Task SeedInterest(DataContext context)
+    {
+        // Kiểm tra nếu bảng Interests đã có dữ liệu thì thoát
+        if (await context.Interest.AnyAsync()) return;
+
+        // Tạo danh sách các sở thích mẫu
+        var interests = new List<Interest>
+        {
+            new Interest { Name = "Thể thao", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+            new Interest { Name = "Âm nhạc", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+            new Interest { Name = "Du lịch", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+            new Interest { Name = "Đọc sách", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+            new Interest { Name = "Nấu ăn", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow }
+        };
+        // Thêm các sở thích vào bảng Interest
+        context.Interest.AddRange(interests);
+        await context.SaveChangesAsync();
+    }
 }

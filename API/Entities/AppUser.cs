@@ -24,5 +24,8 @@ public class AppUser
     // {
     //     return DateOfBirth.CalculateAge();
     // }
+
+    // quan he many-to-many
+    public ICollection<UserInterest>? UserInterests { get; set; }
 }
 
