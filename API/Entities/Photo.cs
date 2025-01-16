@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 
 namespace API.Entities;
 
@@ -13,6 +12,5 @@ public class Photo
 
     // navigation properties
     public int AppUserId { get; set; }
-    [JsonIgnore]
     public AppUser AppUser { get; set; } = null!; // Yêu cầu tham chiếu điều hướng 
 }
