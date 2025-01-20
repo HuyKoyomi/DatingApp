@@ -10,7 +10,7 @@ import { environment } from '../../environments/environment.development';
 export class AccountService {
   private http = inject(HttpClient);
   baseUrl = environment.apiUrl;
-  currentUser = signal<User | null>(null);
+  currentUser = signal<User | any>(null);
 
   login(model: any) {
     return this.http.post(this.baseUrl + 'account/login', model).pipe(
