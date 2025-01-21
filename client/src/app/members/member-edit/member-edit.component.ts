@@ -11,11 +11,12 @@ import { MembersService } from '../../_services/members.service';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 @Component({
   selector: 'app-member-edit',
   standalone: true,
-  imports: [TabsModule, FormsModule],
+  imports: [TabsModule, FormsModule, NgxSpinnerModule],
   templateUrl: './member-edit.component.html',
   styleUrl: './member-edit.component.css',
 })
@@ -45,8 +46,11 @@ export class MemberEditComponent implements OnInit {
   }
 
   updateMember() {
-    console.log(this.member);
-    this.toastr.success('success');
-    this.editForm?.reset(this.member);
+    this.membersService.updateMember(this.editForm?.value).subscribe({
+      next: () => {
+        this.toastr.success('Profile updated successfully!');
+        this.editForm?.reset(this.member);
+      },
+    });
   }
 }

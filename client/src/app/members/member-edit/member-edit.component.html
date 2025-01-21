@@ -1,5 +1,6 @@
 @if (member) {
 <div class="row">
+    <ngx-spinner bdColor = "rgba(0, 0, 0, 0.8)" size = "default" color = "#fff" type = "square-jelly-box" [fullScreen] = "true"><p style="color: white" > Loading... </p></ngx-spinner>
     <div class="col-4">
         <h1>Your profile</h1>
     </div>
@@ -39,7 +40,8 @@
                 </div>
             </div>
             <div class="card-footer">
-                <button type="submit" form="editForm" [disabled]="!editForm.dirty" class="btn btn-success col-12" >Save changes</button>
+                <button type="submit" form="editForm" [disabled]="!editForm.dirty" class="btn btn-success col-12">Save
+                    changes</button>
             </div>
         </div>
 
@@ -61,9 +63,9 @@
                     <h4 class="mt-2">Location Details</h4>
                     <div class="d-flex align-items-center">
                         <label for="">City:</label>
-                        <input type="text" [(ngModel)]="member.city" class="form-control mx-2">
+                        <input type="text" name="city" [(ngModel)]="member.city" class="form-control mx-2">
                         <label for="">Country:</label>
-                        <input type="text" [(ngModel)]="member.country" class="form-control mx-2">
+                        <input type="text" name="country" [(ngModel)]="member.country" class="form-control mx-2">
                     </div>
                 </form>
 
