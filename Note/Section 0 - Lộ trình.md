@@ -9,10 +9,12 @@
 ## **Section 8 summary**
 ## **Section 9 summary**
 
-## **Section 10 summary**
+## **Section 10 summary** - Updating resources
 1. Angular Template forms
 2. The CanDeactive Route Guard 
 3. The @ViewChild decorator
 4. Persisting changes to the API
 5. Adding loading indicators to the client app
 6. Caching dât in Angular services
+
+## **Section 11 summary** - Adding photo upload functionality
