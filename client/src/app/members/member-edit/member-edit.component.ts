@@ -1,4 +1,10 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  inject,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { Member } from '../../_models/member';
 import { AccountService } from '../../_services/account.service';
 import { MembersService } from '../../_services/members.service';
@@ -14,7 +20,13 @@ import { ToastrService } from 'ngx-toastr';
   styleUrl: './member-edit.component.css',
 })
 export class MemberEditComponent implements OnInit {
-  @ViewChild('editForm') editForm?: NgForm; // lay thong tin form
+  @ViewChild('editForm') editForm?: NgForm; //  lấy thông tin của form từ template (HTML) vào component TypeScript. - @ViewChild('editForm'): Tìm kiếm phần tử con (child element) có biến #editForm trong template.
+  // sử dụng @HostListener để bắt sự kiện beforeunload của trình duyệt nhằm cảnh báo người dùng khi họ rời khỏi trang mà có thay đổi chưa được lưu
+  @HostListener('window:beforeunload', ['$event']) notify($event: any) {
+    if (this.editForm?.dirty) {
+      $event.returnValue = true;
+    }
+  }
   member?: Member;
   private accountService = inject(AccountService);
   private membersService = inject(MembersService);
