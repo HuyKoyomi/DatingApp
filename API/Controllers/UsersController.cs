@@ -1,15 +1,14 @@
 
 
 using System.Security.Claims;
-using API.Data;
 using API.DTOs;
 using API.Entities;
 using API.Extensions;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
@@ -85,7 +84,7 @@ public class UsersController : BaseApiController
     }
 
     [HttpPut("set-main-photo/{photoId}")]
-    public async Task<ActionResult> SetMainPhotos(int photoId)
+    public async Task<ActionResult> SetMainPhoto(int photoId)
     {
         //  tim tai khoan dang dang nhap
         var user = await _userRepository.GetUserByUsernameAsync(User.GetUserName());
@@ -107,4 +106,28 @@ public class UsersController : BaseApiController
 
     }
 
+    [HttpDelete("delete-photo/{photoId}")]
+    public async Task<ActionResult> DeletePhoto(int photoId)
+    {
+        //  tim tai khoan dang dang nhap
+        var user = await _userRepository.GetUserByUsernameAsync(User.GetUserName());
+        if (user == null) return BadRequest("Cannot update user");
+        // tìm ảnh trong user dựa theo id
+        var photo = user.Photos.FirstOrDefault(x => x.Id == photoId);
+        if (photo == null || photo.IsMain) return BadRequest("This photo cannot be deleted!");
+
+        // kiểm tra tồn tại PublicId
+        if (photo.PublicId != null)
+        {
+            var result = await _photoService.DeletePhotoAsync(photo.PublicId);
+            if (result.Error != null) return BadRequest(result.Error.Message);
+        }
+
+        // xóa ảnh trong user 
+        user.Photos.Remove(photo);
+        // update Db
+        if (await _userRepository.SaveAllAsync()) return Ok();
+
+        return BadRequest("Problem deleting photo");
+    }
 }

@@ -37,7 +37,7 @@ public class PhotoService : IPhotoService
 
     public async Task<DeletionResult> DeletePhotoAsync(string publicId)
     {
-        var deleteParams = new DeletionParams(publicId);
-        return await _cloudinary.DestroyAsync(deleteParams);
+        var deleteParams = new DeletionParams(publicId); // tạo yêu cầu xoá ảnh.
+        return await _cloudinary.DestroyAsync(deleteParams); // xóa ảnh
     }
 }
