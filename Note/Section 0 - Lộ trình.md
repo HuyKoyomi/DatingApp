@@ -18,3 +18,8 @@
 6. Caching dât in Angular services
 
 ## **Section 11 summary** - Adding photo upload functionality
+1. Photo storage options
+2. Adding related entities
+3. Using the Debugger (!again)
+5. Updating and deleting resuorce
+6. What to return when creating resources in a REST based API
