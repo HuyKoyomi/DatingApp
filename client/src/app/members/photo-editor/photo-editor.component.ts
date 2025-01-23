@@ -4,6 +4,9 @@ import { DecimalPipe, NgClass, NgFor, NgIf, NgStyle } from '@angular/common';
 import { FileUploader, FileUploadModule } from 'ng2-file-upload';
 import { AccountService } from '../../_services/account.service';
 import { environment } from '../../../environments/environment.development';
+import { MembersService } from '../../_services/members.service';
+import { ToastrService } from 'ngx-toastr';
+import { Photo } from '../../_models/photo';
 
 @Component({
   selector: 'app-photo-editor',
@@ -14,8 +17,10 @@ import { environment } from '../../../environments/environment.development';
 })
 export class PhotoEditorComponent implements OnInit {
   private accountService = inject(AccountService);
-  member = input.required<Member>();
+  private membersService = inject(MembersService);
+  private toastr = inject(ToastrService);
   memberChange = output<Member>();
+  member = input.required<Member>();
 
   uploader?: FileUploader; // Khởi tạo một FileUploader.
   hasBaseDropZoneOver = false; // Kiểm soát trạng thái khi file kéo vào vùng upload.
@@ -27,6 +32,26 @@ export class PhotoEditorComponent implements OnInit {
 
   fileOverBase(e: any) {
     this.hasBaseDropZoneOver = e; // Khi người dùng kéo file vào vùng upload, trạng thái hasBaseDropZoneOver thay đổi
+  }
+
+  setMainPhoto(photo: Photo) {
+    this.membersService.setMainPhoto(photo).subscribe({
+      next: () => {
+        const user = this.accountService.currentUser();
+        if (user) {
+          user.photoUrl = photo.url;
+          this.accountService.setCurrentUser(user); // update lại store
+        }
+        const updateMember = { ...this.member() };
+        updateMember.photoUrl = photo.url;
+        updateMember.photos.map((p) => {
+          if (p.isMain) p.isMain = false;
+          if (p.id === photo.id) p.isMain = true;
+        });
+        this.memberChange.emit(updateMember); // update lai ảnh ở component cha
+        this.toastr.success('Updated main photo successfully!');
+      },
+    });
   }
 
   initializeUploader() {

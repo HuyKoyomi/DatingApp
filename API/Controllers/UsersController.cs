@@ -67,7 +67,6 @@ public class UsersController : BaseApiController
 
         if (user == null) return BadRequest("Cannot update user");
 
-
         var result = await _photoService.AddPhotoAsync(file);
 
         if (result.Error != null) return BadRequest(result.Error.Message);
@@ -83,6 +82,29 @@ public class UsersController : BaseApiController
             return CreatedAtAction(nameof(GetUser), new { username = user.Username }, _mapper.Map<PhotoDto>(photo));
 
         return BadRequest("Problem adding photo");
+    }
+
+    [HttpPut("set-main-photo/{photoId}")]
+    public async Task<ActionResult> SetMainPhotos(int photoId)
+    {
+        //  tim tai khoan dang dang nhap
+        var user = await _userRepository.GetUserByUsernameAsync(User.GetUserName());
+        if (user == null) return BadRequest("Cannot update user");
+
+        // tìm ảnh trong user dựa theo id
+        var photo = user.Photos.FirstOrDefault(x => x.Id == photoId);
+        if (photo == null || photo.IsMain) return BadRequest("Cannot use this as main photo");
+        // tìm ảnh trong user là main => xóa main cũ, set main mới
+        var currentMain = user.Photos.FirstOrDefault(x => x.IsMain);
+        if (currentMain != null)
+        {
+            currentMain.IsMain = false;
+        }
+        photo.IsMain = true;
+        // update db
+        if (await _userRepository.SaveAllAsync()) return NoContent();
+        return BadRequest("Problem setting main photo");
+
     }
 
 }
