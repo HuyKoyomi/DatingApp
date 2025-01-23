@@ -54,6 +54,19 @@ export class PhotoEditorComponent implements OnInit {
     });
   }
 
+  deletePhoto(photo: Photo) {
+    this.membersService.deletePhoto(photo).subscribe({
+      next: () => {
+        // cập nhật ảnh ở componet cha
+        const updateMember = { ...this.member() };
+        updateMember.photos = updateMember.photos.filter(
+          (x) => x.id !== photo.id
+        );
+        this.memberChange.emit(updateMember); // update lai ảnh ở component cha
+      },
+    });
+  }
+
   initializeUploader() {
     this.uploader = new FileUploader({
       url: this.baseUrl + 'users/add-photo',
