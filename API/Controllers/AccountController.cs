@@ -4,11 +4,12 @@ using API.Data;
 using API.DTOs;
 using API.Entities;
 using API.Interfaces;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
-public class AccountController(DataContext context, ITokenService tokenService) : BaseApiController
+public class AccountController(DataContext context, ITokenService tokenService, IMapper mapper) : BaseApiController
 {
     [HttpPost("register")]
     public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
@@ -17,24 +18,21 @@ public class AccountController(DataContext context, ITokenService tokenService) 
         {
             return BadRequest("Username is taken");
         }
-        return Ok();
-        // using var hmac = new HMACSHA512(); // Lớp dùng để tạo Hash (mã băm) từ mật khẩu, đảm bảo an toàn cho thông tin người dùng + Tự động tạo một Key được sử dụng làm PasswordSalt
 
-        // // Tạo đối tượng AppUser
-        // var user = new AppUser
-        // {
-        //     Username = registerDto.Username.ToLower(),
-        //     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)), // Mã hóa mật khẩu người dùng bằng HMACSHA512.
-        //     PasswordSalt = hmac.Key // Lưu trữ Key từ HMACSHA512 để giải mã mật khẩu sau này.
-        // };
+        using var hmac = new HMACSHA512(); // Lớp dùng để tạo Hash (mã băm) từ mật khẩu, đảm bảo an toàn cho thông tin người dùng + Tự động tạo một Key được sử dụng làm PasswordSalt
 
-        // context.Users.Add(user); // thêm đối tượng user vào bảng Users trong cơ sở dữ liệu.
-        // await context.SaveChangesAsync(); // Lưu thay đổi vào cơ sở dữ liệu một cách bất đồng bộ.
-        // return new UserDto
-        // {
-        //     Username = user.Username,
-        //     Token = tokenService.CreateToken(user),
-        // };
+        var user = mapper.Map<AppUser>(registerDto);
+        user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)); // Mã hóa mật khẩu người dùng bằng HMACSHA512.
+        user.PasswordSalt = hmac.Key; // Lưu trữ Key từ HMACSHA512 để giải mã mật khẩu sau này.
+
+        context.Users.Add(user); // thêm đối tượng user vào bảng Users trong cơ sở dữ liệu.
+        await context.SaveChangesAsync(); // Lưu thay đổi vào cơ sở dữ liệu một cách bất đồng bộ.
+        return new UserDto
+        {
+            Username = user.Username,
+            Token = tokenService.CreateToken(user),
+            KnowAs = user.KnownAs,
+        };
     }
 
     [HttpPost("login")]
@@ -61,6 +59,7 @@ public class AccountController(DataContext context, ITokenService tokenService) 
         return new UserDto
         {
             Username = user.Username,
+            KnowAs = user.KnownAs,
             Token = tokenService.CreateToken(user),
             PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url,
         };
