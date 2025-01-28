@@ -25,3 +25,8 @@
 6. What to return when creating resources in a REST based API
 
 ## **Section 12 summary** - Reactive forms
+1. Use Reactive Forms
+2. Use Angular Validation for inputs
+3. Implement custom validators
+4. Implement reusable from controls
+5. Worikong with Date inputs
