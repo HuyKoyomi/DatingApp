@@ -1,6 +1,7 @@
 import { Component, inject, output, OnInit } from '@angular/core';
 import {
   AbstractControl,
+  FormBuilder,
   FormControl,
   FormGroup,
   FormsModule,
@@ -11,18 +12,25 @@ import {
 import { ToastrService } from 'ngx-toastr';
 import { AccountService } from './../_services/account.service';
 import { JsonPipe, NgIf } from '@angular/common';
-import { TextInputComponent } from "../_forms/text-input/text-input.component";
+import { TextInputComponent } from '../_forms/text-input/text-input.component';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, JsonPipe, NgIf, TextInputComponent],
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    JsonPipe,
+    NgIf,
+    TextInputComponent,
+  ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
 })
 export class RegisterComponent implements OnInit {
   private accountService = inject(AccountService);
   private toasrt = inject(ToastrService);
+  private fb = inject(FormBuilder); // sử dụng FormBuilder - Code ngắn gọn hơn, dễ đọc. // Dễ mở rộng với form phức tạp. // Hỗ trợ Dependency Injection tốt hơn.
   cancelRegister = output<boolean>();
   model: any = {};
   form: FormGroup = new FormGroup({});
@@ -32,17 +40,16 @@ export class RegisterComponent implements OnInit {
   }
 
   initializeForm() {
-    this.form = new FormGroup({
-      username: new FormControl('', Validators.required),
-      password: new FormControl('', [
-        Validators.required,
-        Validators.minLength(4),
-        Validators.maxLength(8),
-      ]),
-      confirmPassword: new FormControl('', [
-        Validators.required,
-        this.matchValues('password'),
-      ]),
+    this.form = this.fb.group({
+      username: ['', Validators.required],
+      password: [
+        '',
+        [Validators.required, Validators.minLength(4), Validators.maxLength(8)],
+      ],
+      confirmPassword: [
+        '',
+        [Validators.required, this.matchValues('password')],
+      ],
     });
 
     this.form.controls['password'].valueChanges.subscribe({
