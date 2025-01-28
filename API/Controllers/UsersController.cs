@@ -76,6 +76,9 @@ public class UsersController : BaseApiController
             PublicId = result.PublicId,
         };
 
+        // kiem tra xem đã có ảnh nào chua
+        if (user.Photos.Count == 0) photo.IsMain = true;
+
         user.Photos.Add(photo);
         if (await _userRepository.SaveAllAsync())
             return CreatedAtAction(nameof(GetUser), new { username = user.Username }, _mapper.Map<PhotoDto>(photo));

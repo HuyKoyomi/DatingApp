@@ -46,13 +46,20 @@
     </div> -->
   </div>
 
+  @if (validationErrors) {
+  <div class="alert alert-danger text-start">
+    <ul class="text-danger">
+      @for (err of validationErrors; track $index) {
+      <li>{{err}}</li>
+      }
+    </ul>
+  </div>
+  }
+
   <div class="form-group text-center">
-    <button class="btn btn-success me-2" type="submit">Register</button>
+    <button class="btn btn-success me-2" type="submit" [disabled]="!form.valid">Register</button>
     <button class="btn btn-default me-2" type="button" (click)="cancel()">
       Cancel
     </button>
   </div>
 </form>
-
-<p>Form value: {{ form.value | json }}</p>
-<p>Form status: {{ form.status | json }}</p>

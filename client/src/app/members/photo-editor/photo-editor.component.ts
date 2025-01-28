@@ -90,6 +90,21 @@ export class PhotoEditorComponent implements OnInit {
       updateMember.photos.push(photo);
       this.memberChange.emit(updateMember); // Gửi dữ liệu cập nhật ra component cha
       // emit() được sử dụng với EventEmitter để gửi dữ liệu từ component con lên component cha.
+    
+      // nếu người dùng chưa có ảnh chính thì đặt ảnh vừa update là main
+      if(photo.isMain){
+        const user = this.accountService.currentUser();
+        if (user) {
+          user.photoUrl = photo.url;
+          this.accountService.setCurrentUser(user); // update lại store
+        }
+        updateMember.photoUrl = photo.url;
+        updateMember.photos.map((p) => {
+          if (p.isMain) p.isMain = false;
+          if (p.id === photo.id) p.isMain = true;
+        });
+        this.memberChange.emit(updateMember); // update lai ảnh ở component cha
+      }
     };
   }
 }
