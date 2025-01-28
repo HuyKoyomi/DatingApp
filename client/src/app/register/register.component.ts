@@ -13,6 +13,8 @@ import { ToastrService } from 'ngx-toastr';
 import { AccountService } from './../_services/account.service';
 import { JsonPipe, NgIf } from '@angular/common';
 import { TextInputComponent } from '../_forms/text-input/text-input.component';
+import { DatePickerComponent } from '../_forms/date-picker/date-picker.component';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
 @Component({
   selector: 'app-register',
@@ -23,6 +25,8 @@ import { TextInputComponent } from '../_forms/text-input/text-input.component';
     JsonPipe,
     NgIf,
     TextInputComponent,
+    BsDatepickerModule,
+    DatePickerComponent,
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
@@ -34,14 +38,21 @@ export class RegisterComponent implements OnInit {
   cancelRegister = output<boolean>();
   model: any = {};
   form: FormGroup = new FormGroup({});
+  maxDate = new Date();
 
   ngOnInit(): void {
     this.initializeForm();
+    this.maxDate.setFullYear(this.maxDate.getFullYear() - 18);
   }
 
   initializeForm() {
     this.form = this.fb.group({
+      gender: ['male'],
       username: ['', Validators.required],
+      knownAs: ['', Validators.required],
+      dateOfBirth: ['', Validators.required],
+      city: ['', Validators.required],
+      country: ['', Validators.required],
       password: [
         '',
         [Validators.required, Validators.minLength(4), Validators.maxLength(8)],
