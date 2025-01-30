@@ -1,7 +1,22 @@
 <div class="row">
-    @for (member of memberService.members(); track $index) {
+    @for (member of memberService.paginatedResult()?.items; track $index) {
     <div class="col-2">
         <app-member-card [member]="member"></app-member-card>
     </div>
     }
 </div>
+@if (memberService.paginatedResult()?.pagination) {
+<div class="d-flex justify-content-center">
+    <pagination [boundaryLinks]="true" [totalItems]="memberService.paginatedResult()?.pagination?.totalPages ?? 1"
+        [itemsPerPage]="memberService.paginatedResult()?.pagination?.currentPage ?? 1" previousText="&lsaquo;"
+        (pageChanged)="pageChanged($event)" [maxSize]="10" nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;">
+    </pagination>
+</div>
+}
+<!-- 
+Toán tử ! trong TypeScript là Non-null Assertion Operator, dùng để nói với TypeScript rằng giá trị đó chắc chắn không phải null hoặc undefined 
+Toán tử ?? (Nullish Coalescing Operator) trong TypeScript có chức năng cung cấp giá trị mặc định khi gặp null hoặc undefined. Nó khác với toán tử || (Logical OR) ở điểm chỉ kiểm tra null hoặc undefined, không kiểm tra các giá trị falsy khác như 0, false, "".
+
+?. (Optional Chaining): Kiểm tra xem một thuộc tính có tồn tại hay không (tránh lỗi khi truy cập undefined hoặc null).
+?? (Nullish Coalescing): Nếu giá trị là null hoặc undefined, nó sẽ thay thế bằng giá trị mặc định.
+-->
