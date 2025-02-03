@@ -29,6 +29,12 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
             query = query.Where(x => x.Gender == userParams.Gender);
         }
 
+        // Thêm điều kiện lọc vào query theo tuổi
+        var minDob = DateOnly.FromDateTime(DateTime.Today.AddYears(-userParams.MaxAge - 1));
+        var maxDob = DateOnly.FromDateTime(DateTime.Today.AddYears(-userParams.MinAge));
+
+        query = query.Where(x => x.DateOfBirth >= minDob && x.DateOfBirth <= maxDob);
+
         // Áp dụng phân trang
         return await PagedList<MemberDto>.CreateAsync(query.ProjectTo<MemberDto>(mapper.ConfigurationProvider), userParams.PageNumber, userParams.PageSize);
     }
