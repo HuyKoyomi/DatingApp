@@ -31,8 +31,9 @@ public class UsersController : BaseApiController
 
     // [AllowAnonymous]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers([FromQuery]UserParams userParams)
+    public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers([FromQuery] UserParams userParams)
     {
+        userParams.CurrentUserName = User.GetUserName();
         // Gọi repository (_userRepository) để lấy danh sách MemberDto.
         var users = await _userRepository.GetMembersAsync(userParams);
         // Thêm Header phân trang vào Response

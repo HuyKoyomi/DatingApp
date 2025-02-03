@@ -20,10 +20,17 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
     public async Task<PagedList<MemberDto>> GetMembersAsync(UserParams userParams)
     {
         // Tạo truy vấn từ bảng Users
-        var query = context.Users.ProjectTo<MemberDto>(mapper.ConfigurationProvider);
+        var query = context.Users.AsQueryable(); // Chuyển DbSet<User> thành IQueryable<User>. => IQueryable hỗ trợ truy vấn LINQ động và trì hoãn thực thi (deferred execution).
+        query = query.Where(x => x.Username != userParams.CurrentUserName);
+
+        // Thêm điều kiện lọc vào query để chỉ lấy những user có giới tính giống
+        if (userParams.Gender != null)
+        {
+            query = query.Where(x => x.Gender == userParams.Gender);
+        }
 
         // Áp dụng phân trang
-        return await PagedList<MemberDto>.CreateAsync(query, userParams.PageNumber, userParams.PageSize);
+        return await PagedList<MemberDto>.CreateAsync(query.ProjectTo<MemberDto>(mapper.ConfigurationProvider), userParams.PageNumber, userParams.PageSize);
     }
 
     public async Task<AppUser?> GetUserByIdAsync(int id)
