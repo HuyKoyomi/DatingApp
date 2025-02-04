@@ -1,10 +1,9 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { inject, Injectable, output, signal } from '@angular/core';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
+import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { Member } from '../_models/member';
-import { of, tap } from 'rxjs';
-import { Photo } from '../_models/photo';
 import { PaginatedResult } from '../_models/pagination';
+import { Photo } from '../_models/photo';
 import { UserParams } from './../_models/userParams';
 
 @Injectable({
@@ -13,10 +12,13 @@ import { UserParams } from './../_models/userParams';
 export class MembersService {
   private http = inject(HttpClient);
   baseUrl = environment.apiUrl;
-  // members = signal<Member[]>([]);
   paginatedResult = signal<PaginatedResult<Member[]> | null>(null);
+  memberCache = new Map(); // hàm cache
 
   getMembers(userParams: UserParams) {
+    const response = this.memberCache.get(Object.values(userParams).join('-')); // chuyển các giá trị về thành chuỗi duy nhất
+    if (response) return this.setPaginationResponse(response); // Kiểm tra xem dữ liệu có trong cache không để tránh gọi API ko cần thiết
+
     // cach su dung param trong angular
     let params = new HttpParams();
     if (userParams.pageNumber && userParams.pageSize) {
@@ -28,19 +30,22 @@ export class MembersService {
     params = params.append('gender', userParams.gender);
     params = params.append('orderBy', userParams.orderBy);
 
-
     return this.http
       .get<Member[]>(this.baseUrl + 'users', { observe: 'response', params })
       .subscribe({
-        next: (response) => {
-          this.paginatedResult.set({
-            items: response.body as Member[],
-            pagination: JSON.parse(response.headers.get('Pagination')!), //  Dấu ! (non-null assertion operator) trong TypeScript sẽ bỏ qua kiểm tra null, nhưng nếu get('Pagination') trả về null, JSON.parse(null) sẽ gây lỗi.
-          });
+        next: (res) => {
+          this.setPaginationResponse(res);
+          this.memberCache.set(Object.values(userParams).join('-'), res); // cập nhật cache
         },
       });
   }
 
+  private setPaginationResponse(response: HttpResponse<Member[]>) {
+    this.paginatedResult.set({
+      items: response.body as Member[],
+      pagination: JSON.parse(response.headers.get('Pagination')!), //  Dấu ! (non-null assertion operator) trong TypeScript sẽ bỏ qua kiểm tra null, nhưng nếu get('Pagination') trả về null, JSON.parse(null) sẽ gây lỗi.
+    });
+  }
   getMember(username: string) {
     // //  kiểm tra xem member có trong list hiện tại hay không
     // const member = this.members().find((x) => x.username == username);
