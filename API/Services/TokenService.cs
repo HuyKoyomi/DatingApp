@@ -26,7 +26,9 @@ namespace API.Services
             // Claim: Đại diện cho thông tin người dùng
             var claims = new List<Claim>
             {
-                new(ClaimTypes.NameIdentifier, appUser.Username)
+                new(ClaimTypes.NameIdentifier, appUser.Id.ToString()),
+                new(ClaimTypes.Name, appUser.Username)
+
             };
 
             // Tạo thông tin ký sốs

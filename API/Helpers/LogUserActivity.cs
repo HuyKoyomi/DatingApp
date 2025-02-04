@@ -12,10 +12,10 @@ public class LogUserActivity : IAsyncActionFilter
 
         if (context.HttpContext.User.Identity?.IsAuthenticated != true) return; // Kiểm tra xem người dùng có được xác thực không
 
-        var username = resultContext.HttpContext.User.GetUserName();
+        var userId = resultContext.HttpContext.User.GetUserId();
 
         var repo = resultContext.HttpContext.RequestServices.GetRequiredService<IUserRepository>(); // Lấy repository và thông tin người dùng
-        var user = await repo.GetUserByUsernameAsync(username);
+        var user = await repo.GetUserByIdAsync(userId);
         if (user == null) return;
         user.LastActive = DateTime.UtcNow;
         await repo.SaveAllAsync();
