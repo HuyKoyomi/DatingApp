@@ -1,41 +1,52 @@
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
+import { of } from 'rxjs';
 import { environment } from '../../environments/environment.development';
 import { Member } from '../_models/member';
 import { PaginatedResult } from '../_models/pagination';
 import { Photo } from '../_models/photo';
 import { UserParams } from './../_models/userParams';
+import { AccountService } from './account.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MembersService {
   private http = inject(HttpClient);
+  private accountService = inject(AccountService);
   baseUrl = environment.apiUrl;
   paginatedResult = signal<PaginatedResult<Member[]> | null>(null);
   memberCache = new Map(); // hàm cache
+  user = this.accountService.currentUser();
+  userParams = signal<UserParams>(new UserParams(this.user));
 
-  getMembers(userParams: UserParams) {
-    const response = this.memberCache.get(Object.values(userParams).join('-')); // chuyển các giá trị về thành chuỗi duy nhất
+  restUserParams() {
+    this.userParams.set(new UserParams(this.user));
+  }
+
+  getMembers() {
+    const response = this.memberCache.get(
+      Object.values(this.userParams()).join('-')
+    ); // chuyển các giá trị về thành chuỗi duy nhất
     if (response) return this.setPaginationResponse(response); // Kiểm tra xem dữ liệu có trong cache không để tránh gọi API ko cần thiết
 
     // cach su dung param trong angular
     let params = new HttpParams();
-    if (userParams.pageNumber && userParams.pageSize) {
-      params = params.append('pageNumber', userParams.pageNumber);
-      params = params.append('pageSize', userParams.pageSize);
+    if (this.userParams().pageNumber && this.userParams().pageSize) {
+      params = params.append('pageNumber', this.userParams().pageNumber);
+      params = params.append('pageSize', this.userParams().pageSize);
     }
-    params = params.append('minAge', userParams.minAge);
-    params = params.append('maxAge', userParams.maxAge);
-    params = params.append('gender', userParams.gender);
-    params = params.append('orderBy', userParams.orderBy);
+    params = params.append('minAge', this.userParams().minAge);
+    params = params.append('maxAge', this.userParams().maxAge);
+    params = params.append('gender', this.userParams().gender);
+    params = params.append('orderBy', this.userParams().orderBy);
 
     return this.http
       .get<Member[]>(this.baseUrl + 'users', { observe: 'response', params })
       .subscribe({
         next: (res) => {
           this.setPaginationResponse(res);
-          this.memberCache.set(Object.values(userParams).join('-'), res); // cập nhật cache
+          this.memberCache.set(Object.values(this.userParams()).join('-'), res); // cập nhật cache
         },
       });
   }
@@ -46,7 +57,13 @@ export class MembersService {
       pagination: JSON.parse(response.headers.get('Pagination')!), //  Dấu ! (non-null assertion operator) trong TypeScript sẽ bỏ qua kiểm tra null, nhưng nếu get('Pagination') trả về null, JSON.parse(null) sẽ gây lỗi.
     });
   }
+
   getMember(username: string) {
+    const member: Member = [...this.memberCache.values()]
+      .reduce((arr, elem) => arr.concat(elem.body), [])
+      .find((m: Member) => m.username === username);
+    console.log(member);
+    if (member) return of(member);
     // //  kiểm tra xem member có trong list hiện tại hay không
     // const member = this.members().find((x) => x.username == username);
     // if (member) return of(member); // of() là một phương thức của rxjs, dùng để tạo một Observable từ một giá trị đơn lẻ
