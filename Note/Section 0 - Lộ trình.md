@@ -52,3 +52,8 @@
 5. Using Action Filters
 6. Adding a TimeAgo Pipe
 7. Implement caching in the client for paginated resource
+
+## **Section 14 summary** - Adding the likes feature
+
+1. Many to many relationships
+2. Configuring entities in the DbContext
