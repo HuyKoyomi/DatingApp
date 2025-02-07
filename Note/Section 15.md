@@ -9,4 +9,11 @@
      - Cấu hình quan hệ trong DataContext
      - dotnet ef migrations add MessageEntityAdded
 
+   - Lession 179. Setting up message repository
+     - Thêm file IMessageRepository
+     - Thêm MessageDto
+     - Thêm file MessageRepository
+     - cấu hình scope
+
+
 2. FE
