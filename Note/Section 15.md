@@ -15,5 +15,11 @@
      - Thêm file MessageRepository
      - cấu hình scope
 
+   - Lession 180. Setting up auto mapper profiles
+
+   - Lession 181. Adding a mesage controller
+
+   - Lession 182. Api GetMessagesForUSer
+
 
 2. FE

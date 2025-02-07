@@ -4,7 +4,7 @@ using API.Entities;
 using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+using AutoMapper.QueryableExtensions;
 
 namespace API.Services;
 
@@ -25,10 +25,22 @@ public class MessageRepository(DataContext context, IMapper mapper) : IMessageRe
         return await context.Messages.FindAsync(id);
     }
 
-    public Task<PagedList<MessageDto>> GetMessagesForUser()
+    public async Task<PagedList<MessageDto>> GetMessagesForUser(MessageParams messageParams)
     {
-        throw new NotImplementedException();
-    }
+        var query = context.Messages
+        .OrderByDescending(x => x.MessageSent)
+        .AsQueryable();
+
+        query = messageParams.Container switch
+        {
+            "Inbox" => query.Where(x => x.Recipient.Username == messageParams.Username), // Lấy các tin nhắn đến
+            "Outbox" => query.Where(x => x.Sender.Username == messageParams.Username), // Lấy các tin nhắn gửi
+            _ => query.Where(x => x.Recipient.Username == messageParams.Username && x.DateRead == null)
+        };
+
+        var messages = query.ProjectTo<MessageDto>(mapper.ConfigurationProvider);
+        return await PagedList<MessageDto>.CreateAsync(messages, messageParams.PageNumber, messageParams.PageSize);
+    } 
 
     public Task<IEnumerable<MessageDto>> GetMessageThread(string currentUsername, string recipientUsername)
     {
