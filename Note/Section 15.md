@@ -51,3 +51,8 @@
 
   - sửa message.component.ts
     - _loadMessage()_, _getRouter()_
+
+- 186. Adding the message thread in the client
+  - thêm member-messages.component
+
+- 188. Activating the message tab

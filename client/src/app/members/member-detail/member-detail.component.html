@@ -18,11 +18,11 @@
                 </div>
                 <div>
                     <strong>Last active:</strong>
-                    <!-- <p>{{member.lastActive | timeago}}</p> -->
+                    <p>{{member.lastActive | timeago}}</p>
                 </div>
                 <div>
                     <strong>Member since:</strong>
-                    <!-- <p>{{member.created | date: 'dd MMM yyyy'}}</p> -->
+                    <p>{{member.created | date: 'dd MMM yyyy'}}</p>
                 </div>
             </div>
             <div class="card-footer">
@@ -37,25 +37,23 @@
 
     <div class="col-8">
         <tabset class="member-tabset" #memberTabs>
-            <!-- (selectTab)="onTabActivated($event)" -->
-            <tab heading="About {{member.knownAs}}">
+            <tab heading="About {{member.knownAs}}" (selectTab)="onTabActived($event)">
                 <h4>Description</h4>
                 <p>{{member.introduction}}</p>
                 <h4>Looking for</h4>
                 <p>{{member.lookingFor}}</p>
             </tab>
-            <!-- (selectTab)="onTabActivated($event)" -->
-            <tab heading="Interests">
+            <tab heading="Interests" (selectTab)="onTabActived($event)">
                 <h4>Interests</h4>
                 <p>{{member.interests}}</p>
             </tab>
-            <tab heading="Photos">
-                 @for (image of images; track $index) {
-                    <img src="{{image}}">
-                 }
+            <tab heading="Photos" (selectTab)="onTabActived($event)">
+                @for (image of images; track $index) {
+                <img src="{{image}}">
+                }
             </tab>
-            <tab heading="Messages">
-                <!-- <app-member-messages [username]="member.userName"></app-member-messages> -->
+            <tab heading="Messages" (selectTab)="onTabActived($event)">
+                <app-member-messages [username]="member.username" [messages]="messages"></app-member-messages>
             </tab>
         </tabset>
     </div>
