@@ -44,3 +44,10 @@
       - sử dụng hàm trên trong Controller
 
 2.  FE
+
+- 185. Setting up the Angular app for messaging
+
+  - sử dụng jsontots để tạo ra class trong client => tạo class Message.ts
+
+  - sửa message.component.ts
+    - _loadMessage()_, _getRouter()_

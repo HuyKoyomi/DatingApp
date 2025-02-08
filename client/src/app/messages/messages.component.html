@@ -1,1 +1,56 @@
-<p>messages works!</p>
+<div class="mb-4 d-flex">
+    <div class="btn-group" name="container">
+        <button class="btn btn-primary" btnRadio="Unread" [(ngModel)]="container" (click)="loadMessages()">
+            <i class="fa fa-envelope"></i> Unread
+        </button>
+        <button class="btn btn-primary" btnRadio="Inbox" [(ngModel)]="container" (click)="loadMessages()">
+            <i class="fa fa-envelope-open"></i> Inbox
+        </button>
+        <button class="btn btn-primary" btnRadio="Outbox" [(ngModel)]="container" (click)="loadMessages()">
+            <i class="fa fa-paper-plane"></i> Outbox
+        </button>
+    </div>
+</div>
+
+@if (!messSVC.paginatedResult()?.items) {
+<h3>No messages</h3>
+} @else {
+<table class="table table-hover" style="cursor: pointer">
+    <thead>
+        <tr>
+            <th style="width: 40%">Message</th>
+            <th style="width: 20%">From / To</th>
+            <th style="width: 20%">Sent / Received</th>
+            <th style="width: 20%"></th>
+        </tr>
+    </thead>
+    <tbody class="align-middle">
+        @for (mess of messSVC.paginatedResult()?.items; track mess.id) {
+        <tr routerLink="{{getRouter(mess)}}">
+            <td>{{ mess.content }}</td>
+            <td>
+                <div>
+                    <img class="img-circle rounded-circle me-2" [src]="container === 'Outbox'
+                    ? mess.recipientPhotoUrl || './assets/user.png'
+                    : mess.senderPhotoUrl || './assets/user.png' " alt="image of user" />
+                    <strong>{{container === 'Outbox' ? mess.recipientUsername : mess.senderUsername}}</strong>
+                </div>
+            </td>
+            <td>{{mess.messageSent | timeago}}</td>
+            <td><button class="btn btn-danger">Delete</button></td>
+        </tr>
+
+        }
+    </tbody>
+</table>
+}
+
+@if (messSVC.paginatedResult()?.pagination) {
+<div class="d-flex justify-content-center">
+    <pagination [boundaryLinks]="true" [totalItems]="messSVC.paginatedResult()?.pagination!.totalItems"
+        [itemsPerPage]="messSVC.paginatedResult()?.pagination!.itemsPerPage"
+        [(ngModel)]="messSVC.paginatedResult()?.pagination!.currentPage" previousText="&lsaquo;"
+        (pageChanged)="pageChanged($event)" [maxSize]="10" nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;">
+    </pagination>
+</div>
+}

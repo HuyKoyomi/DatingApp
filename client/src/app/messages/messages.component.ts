@@ -1,12 +1,43 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+import { MessageService } from '../_services/message.service';
+import { ButtonsModule } from 'ngx-bootstrap/buttons';
+import { FormsModule } from '@angular/forms';
+import { TimeagoModule, TimeagoPipe } from 'ngx-timeago';
+import { Message } from '../_models/message';
+import { RouterLink } from '@angular/router';
+import { PaginationModule } from 'ngx-bootstrap/pagination';
 
 @Component({
   selector: 'app-messages',
   standalone: true,
-  imports: [],
+  imports: [ButtonsModule, FormsModule, TimeagoModule, RouterLink, PaginationModule],
   templateUrl: './messages.component.html',
-  styleUrl: './messages.component.css'
+  styleUrl: './messages.component.css',
 })
-export class MessagesComponent {
+export class MessagesComponent implements OnInit {
+  messSVC = inject(MessageService);
+  container = 'Outbox';
+  pageNumber = 1;
+  pageSize = 5;
 
+  ngOnInit(): void {
+    this.loadMessages();
+  }
+
+  loadMessages() {
+    this.messSVC.getMessages(this.container, this.pageNumber, this.pageSize);
+  }
+
+  getRouter(mess: Message) {
+    if (this.container === 'Outbox')
+      return `/members/${mess.recipientUsername}`;
+    else return `/members/${mess.senderUsername}`;
+  }
+
+  pageChanged(event: any) {
+    if (this.pageNumber != event.page) {
+      this.pageNumber = event.page;
+      this.loadMessages();
+    }
+  }
 }
