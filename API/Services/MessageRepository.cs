@@ -5,6 +5,7 @@ using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Services;
 
@@ -40,11 +41,36 @@ public class MessageRepository(DataContext context, IMapper mapper) : IMessageRe
 
         var messages = query.ProjectTo<MessageDto>(mapper.ConfigurationProvider);
         return await PagedList<MessageDto>.CreateAsync(messages, messageParams.PageNumber, messageParams.PageSize);
-    } 
+    }
 
-    public Task<IEnumerable<MessageDto>> GetMessageThread(string currentUsername, string recipientUsername)
+    public async Task<IEnumerable<MessageDto>> GetMessageThread(string currentUsername, string recipientUsername)
     {
-        throw new NotImplementedException();
+        // Lấy ra danh sách các tin nhắn trao đổi giữa hai người dùng (người hiện tại và người nhận)
+        var messages = await context.Messages
+            .Include(x => x.Sender).ThenInclude(x => x.Photos)
+            .Include(x => x.Recipient).ThenInclude(x => x.Photos)
+            .Where(x =>
+                x.RecipientUsername == currentUsername && x.SenderUsername == recipientUsername ||
+                x.SenderUsername == currentUsername && x.RecipientUsername == recipientUsername
+            )
+            .OrderBy(x => x.MessageSent) // sắp xếp theo thứ tự thời gian gửi
+            .ToListAsync();
+
+        // Đánh dấu các tin nhắn chưa đọc 
+        var unreadMess = messages.Where(x => x.DateRead == null &&
+          x.RecipientUsername == currentUsername
+        ).ToList();
+
+        // cập nhật tất cả các tin nhắn thành đã đọc
+        if (unreadMess.Count != 0)
+        {
+            unreadMess.ForEach(x => x.DateRead = DateTime.UtcNow);
+            await context.SaveChangesAsync();
+        }
+
+        // đổi dữ liệu sang DTO
+        return mapper.Map<IEnumerable<MessageDto>>(messages);
+
     }
 
     public async Task<bool> SaveAllAsync()
