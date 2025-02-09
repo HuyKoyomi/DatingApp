@@ -18,21 +18,29 @@ import { TimeagoModule } from 'ngx-timeago';
   styleUrl: './member-detail.component.css',
 })
 export class MemberDetailComponent implements OnInit {
-  @ViewChild('memberTabs') memberTabs?: TabsetComponent;
+  @ViewChild('memberTabs', { static: true }) memberTabs?: TabsetComponent;
   private membersService = inject(MembersService);
   private messSvc = inject(MessageService);
   private route = inject(ActivatedRoute); // laay router hien tai
-  member?: Member;
+  member: Member = {} as Member;
   images: string[] = [];
   activeTab?: TabDirective;
   messages: Message[] = [];
 
   ngOnInit(): void {
-    this.loadMember();
+    this.route.data.subscribe({
+      next: (data) => {
+        this.member = data['member'];
+        this.member &&
+          this.member.photos.map((el) => {
+            this.images.push(el.url);
+          });
+      },
+    });
 
     this.route.queryParams.subscribe({
-      next: params => params['tab'] && this.selectTab(params['tab'])
-    })
+      next: (params) => params['tab'] && this.selectTab(params['tab']),
+    });
   }
 
   onTabActived(data: TabDirective) {
@@ -55,16 +63,16 @@ export class MemberDetailComponent implements OnInit {
     }
   }
 
-  loadMember() {
-    const username = this.route.snapshot.paramMap.get('username'); // lay bien username tren router
-    if (!username) return;
-    this.membersService.getMember(username).subscribe({
-      next: (member) => {
-        this.member = member;
-        member.photos.map((el) => {
-          this.images.push(el.url);
-        });
-      },
-    });
-  }
+  // loadMember() {
+  //   const username = this.route.snapshot.paramMap.get('username'); // lay bien username tren router
+  //   if (!username) return;
+  //   this.membersService.getMember(username).subscribe({
+  //     next: (member) => {
+  //       this.member = member;
+  //       member.photos.map((el) => {
+  //         this.images.push(el.url);
+  //       });
+  //     },
+  //   });
+  // }
 }

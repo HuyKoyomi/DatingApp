@@ -59,3 +59,6 @@
 - 188. Activating the message tab
 
 - 189. Using query params
+
+- 190. Using route resolvers
+  + ng g r _resolvers/member-detailed --skip-tests
