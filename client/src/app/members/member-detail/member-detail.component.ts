@@ -29,6 +29,10 @@ export class MemberDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadMember();
+
+    this.route.queryParams.subscribe({
+      next: params => params['tab'] && this.selectTab(params['tab'])
+    })
   }
 
   onTabActived(data: TabDirective) {
@@ -41,6 +45,13 @@ export class MemberDetailComponent implements OnInit {
       this.messSvc.getMessageThread(this.member.username).subscribe({
         next: (messages) => (this.messages = messages),
       });
+    }
+  }
+
+  selectTab(heading: string) {
+    if (this.memberTabs) {
+      const messTab = this.memberTabs.tabs.find((x) => x.heading === heading);
+      if (messTab) messTab.active = true;
     }
   }
 

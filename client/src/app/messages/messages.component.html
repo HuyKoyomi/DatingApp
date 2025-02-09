@@ -26,7 +26,7 @@
     </thead>
     <tbody class="align-middle">
         @for (mess of messSVC.paginatedResult()?.items; track mess.id) {
-        <tr routerLink="{{getRouter(mess)}}">
+        <tr routerLink="{{getRouter(mess)}}" [queryParams]="{tab: 'Messages'}">
             <td>{{ mess.content }}</td>
             <td>
                 <div>
