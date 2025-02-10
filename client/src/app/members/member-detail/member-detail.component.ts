@@ -43,6 +43,10 @@ export class MemberDetailComponent implements OnInit {
     });
   }
 
+  onUpdateMessages(event: Message) {
+    this.messages.push(event);
+  }
+
   onTabActived(data: TabDirective) {
     this.activeTab = data;
     if (

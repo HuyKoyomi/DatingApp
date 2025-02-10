@@ -61,4 +61,10 @@
 - 189. Using query params
 
 - 190. Using route resolvers
-  + ng g r _resolvers/member-detailed --skip-tests
+
+  - ng g r \_resolvers/member-detailed --skip-tests
+
+- 191. Sending messages
+  - thêm hàm _sendMessage()_ trong messageService
+  - gọi hàm trên trong _member-message.component.ts_
+  - sử dụng _FormModule_ trong Angular 
