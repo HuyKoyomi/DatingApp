@@ -12,7 +12,8 @@
     </div>
 </div>
 
-@if (!messSVC.paginatedResult()?.items || messSVC.paginatedResult()?.items?.length === 0 ) {
+@if (!messSVC.paginatedResult()?.items ||
+messSVC.paginatedResult()?.items?.length === 0 ) {
 <h3 class="mt-3">No messages</h3>
 } @else {
 <table class="table table-hover" style="cursor: pointer">
@@ -26,30 +27,37 @@
     </thead>
     <tbody class="align-middle">
         @for (mess of messSVC.paginatedResult()?.items; track mess.id) {
-        <tr routerLink="{{getRouter(mess)}}" [queryParams]="{tab: 'Messages'}">
+        <tr routerLink="{{ getRouter(mess) }}" [queryParams]="{ tab: 'Messages' }">
             <td>{{ mess.content }}</td>
             <td>
                 <div>
-                    <img class="img-circle rounded-circle me-2" [src]="container === 'Outbox'
-                    ? mess.recipientPhotoUrl || './assets/user.png'
-                    : mess.senderPhotoUrl || './assets/user.png' " alt="image of user" />
-                    <strong>{{isOutbox ? mess.recipientUsername : mess.senderUsername}}</strong>
+                    <img class="img-circle rounded-circle me-2" [src]="
+              container === 'Outbox'
+                ? mess.recipientPhotoUrl || './assets/user.png'
+                : mess.senderPhotoUrl || './assets/user.png'
+            " alt="image of user" />
+                    <strong>{{
+                        isOutbox ? mess.recipientUsername : mess.senderUsername
+                        }}</strong>
                 </div>
             </td>
-            <td>{{mess.messageSent | timeago}}</td>
-            <td><button class="btn btn-danger">Delete</button></td>
+            <td>{{ mess.messageSent | timeago }}</td>
+            <td (click)="$event.stopPropagation()">
+                <button (click)="deleteMessage(mess.id)" class="btn btn-danger">
+                    Delete
+                </button>
+            </td>
         </tr>
 
         }
     </tbody>
 </table>
-}
-
-@if (messSVC.paginatedResult()?.pagination && messSVC.paginatedResult()?.pagination?.totalItems! > 0) {
+} @if (messSVC.paginatedResult()?.pagination &&
+messSVC.paginatedResult()?.pagination?.totalItems! > 0) {
 <div class="d-flex justify-content-center">
-    <pagination [boundaryLinks]="true" [totalItems]="messSVC.paginatedResult()?.pagination!.totalItems"
-        [itemsPerPage]="messSVC.paginatedResult()?.pagination!.itemsPerPage"
-        [(ngModel)]="messSVC.paginatedResult()?.pagination!.currentPage" previousText="&lsaquo;"
+    <pagination [boundaryLinks]="true" [totalItems]="(messSVC.paginatedResult()?.pagination)!.totalItems"
+        [itemsPerPage]="(messSVC.paginatedResult()?.pagination)!.itemsPerPage"
+        [(ngModel)]="(messSVC.paginatedResult()?.pagination)!.currentPage" previousText="&lsaquo;"
         (pageChanged)="pageChanged($event)" [maxSize]="10" nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;">
     </pagination>
 </div>

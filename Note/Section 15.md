@@ -43,6 +43,9 @@
 
       - sử dụng hàm trên trong Controller
 
+- 193. Deleting messages on the API
+
+
 2.  FE
 
 - 185. Setting up the Angular app for messaging
@@ -65,8 +68,11 @@
   - ng g r \_resolvers/member-detailed --skip-tests
 
 - 191. Sending messages
+
   - thêm hàm _sendMessage()_ trong messageService
   - gọi hàm trên trong _member-message.component.ts_
-  - sử dụng _FormModule_ trong Angular 
+  - sử dụng _FormModule_ trong Angular
 
 - 192. Fixing the photo weirdness
+
+- 194. Deleting messages on the client
