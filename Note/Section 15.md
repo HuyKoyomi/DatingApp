@@ -68,3 +68,5 @@
   - thêm hàm _sendMessage()_ trong messageService
   - gọi hàm trên trong _member-message.component.ts_
   - sử dụng _FormModule_ trong Angular 
+
+- 192. Fixing the photo weirdness
