@@ -58,7 +58,6 @@
 1. Many to many relationships
 2. Configuring entities in the DbContext
 
-
 ## **Section 15 summary** - Adding the Messaging feature
 
 1. More Many to many to many relationships
