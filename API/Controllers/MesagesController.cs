@@ -37,7 +37,7 @@ public class MessagesController : BaseApiController
         var sender = await _userRepo.GetUserByUserNameAsync(username);
         var recipient = await _userRepo.GetUserByUserNameAsync(createMessageDto.RecipientUserName);
 
-        if (sender == null || recipient == null) return BadRequest("Cannot send message at this time");
+        if (sender == null || recipient == null || sender.UserName == null || recipient.UserName == null) return BadRequest("Cannot send message at this time");
 
         var message = new Message
         {

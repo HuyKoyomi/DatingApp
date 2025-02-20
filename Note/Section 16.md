@@ -37,6 +37,19 @@
 
   - cấu hình Identity
 
+- Chỉnh sửa Username => UserName
+
+  - dotnet ef migrations remove
+  - dotnet ef migrations add FixUserRole
+  - dotnet ef database update
+
 - 200. Refactoring and adding a new migration
+
+  - **dotnet build** : Biên dịch (Compile) mã nguồn => chỉ biên dịch mã nguồn của bạn mà không chạy ứng dụng
+  - **dotnet run** : Chạy ứng dụng => Nếu chưa có build trước đó, nó sẽ tự động chạy **dotnet build**. => Nếu đã có build rồi, nó chỉ chạy ứng dụng mà không build lại.
+
+- 201. Updating the seed method
+  - _dotnet ef database drop_ : delet all db
+  - run update lại data
 
 3. FE

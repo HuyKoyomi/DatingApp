@@ -2,16 +2,17 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using API.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Data;
 
 public class Seed
 {
-    public static async Task SeedUsers(DataContext context)
+    public static async Task SeedUsers(UserManager<AppUser> userManager)
     {
         // Đọc thông tinn từ file json
-        if (await context.Users.AnyAsync()) return;
+        if (await userManager.Users.AnyAsync()) return;
         var userData = await File.ReadAllTextAsync("Data/UserSeedData.json");
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         var users = JsonSerializer.Deserialize<List<AppUser>>(userData, options);
@@ -24,10 +25,16 @@ public class Seed
         // Tạo pasword cho các user
         foreach (var user in users)
         {
-            using var hmac = new HMACSHA512();
-            user.UserName = user.UserName.ToLower();
-            context.Users.Add(user); // thêm đối tượng user vào bảng Users trong cơ sở dữ liệu.
+            // await userManager.CreateAsync(user, "123456");
+            var result = await userManager.CreateAsync(user, "Pa$$w0rd");
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    Console.WriteLine($"Error: {error.Description}");
+                }
+            }
+
         }
-        await context.SaveChangesAsync(); // Lưu thay đổi vào cơ sở dữ liệu một cách bất đồng bộ.
     }
 }

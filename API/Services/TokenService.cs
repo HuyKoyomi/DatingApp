@@ -23,6 +23,8 @@ namespace API.Services
             // Tạo khóa mã hóa đối xứng
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenKey)); // => Chuyển đổi TokenKey thành mảng byte sử dụng mã hóa UTF-8.
 
+            if (appUser.UserName == null) throw new Exception("No username for user");
+            
             // Claim: Đại diện cho thông tin người dùng
             var claims = new List<Claim>
             {
