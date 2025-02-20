@@ -1,20 +1,16 @@
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 using API.Entities;
 using API.Interfaces;
-using Humanizer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
 namespace API.Services
 {
-    public class TokenService(IConfiguration config) : ITokenService
+    public class TokenService(IConfiguration config, UserManager<AppUser> userManager) : ITokenService
     {
-        public string CreateToken(AppUser appUser)
+        public async Task<string> CreateToken(AppUser appUser)
         {
             // Lấy TokenKey từ cấu hình
             var tokenKey = config["TokenKey"] ?? throw new Exception("Cannot access tokenKey from appseting");
@@ -24,7 +20,7 @@ namespace API.Services
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenKey)); // => Chuyển đổi TokenKey thành mảng byte sử dụng mã hóa UTF-8.
 
             if (appUser.UserName == null) throw new Exception("No username for user");
-            
+
             // Claim: Đại diện cho thông tin người dùng
             var claims = new List<Claim>
             {
@@ -32,6 +28,11 @@ namespace API.Services
                 new(ClaimTypes.Name, appUser.UserName)
 
             };
+
+            // Taọ role
+            var roles = await userManager.GetRolesAsync(appUser);
+            // Add roles to token
+            claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
             // Tạo thông tin ký sốs
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);

@@ -56,7 +56,11 @@
 - 202. Updating the account controller
 
 - 203. Adding roles to the app
+
   - sửa file Seed.cs, Program.cs
   - drop table and run again
+
+- 204. Adding the roles to the JWT token
+  - theem roles trong tokenService
 
 3. FE
