@@ -27,7 +27,7 @@ namespace API.Services
             var claims = new List<Claim>
             {
                 new(ClaimTypes.NameIdentifier, appUser.Id.ToString()),
-                new(ClaimTypes.Name, appUser.Username)
+                new(ClaimTypes.Name, appUser.UserName)
 
             };
 

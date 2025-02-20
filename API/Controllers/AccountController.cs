@@ -14,9 +14,9 @@ public class AccountController(DataContext context, ITokenService tokenService, 
     [HttpPost("register")]
     public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
     {
-        if (await UserExists(registerDto.Username))
+        if (await UserExists(registerDto.UserName))
         {
-            return BadRequest("Username is taken");
+            return BadRequest("UserName is taken");
         }
 
         using var hmac = new HMACSHA512(); // Lớp dùng để tạo Hash (mã băm) từ mật khẩu, đảm bảo an toàn cho thông tin người dùng + Tự động tạo một Key được sử dụng làm PasswordSalt
@@ -27,7 +27,7 @@ public class AccountController(DataContext context, ITokenService tokenService, 
         await context.SaveChangesAsync(); // Lưu thay đổi vào cơ sở dữ liệu một cách bất đồng bộ.
         return new UserDto
         {
-            Username = user.UserName,
+            UserName = user.UserName,
             Token = tokenService.CreateToken(user),
             KnowAs = user.KnownAs,
             Gender = user.Gender,
@@ -39,7 +39,7 @@ public class AccountController(DataContext context, ITokenService tokenService, 
     {
         var user = await context.Users
         .Include(p => p.Photos)
-        .FirstOrDefaultAsync(x => x.UserName == loginDto.Username.ToLower());
+        .FirstOrDefaultAsync(x => x.UserName == loginDto.UserName.ToLower());
 
         if (user == null)
         {
@@ -48,7 +48,7 @@ public class AccountController(DataContext context, ITokenService tokenService, 
 
         return new UserDto
         {
-            Username = user.UserName,
+            UserName = user.UserName,
             KnowAs = user.KnownAs,
             Gender = user.Gender,
             Token = tokenService.CreateToken(user),

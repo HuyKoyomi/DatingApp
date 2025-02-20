@@ -55,7 +55,7 @@ public class UsersController : BaseApiController
         var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value; // lấy username từ claims của người dùng hiện tại
         if (username == null) return BadRequest("No username found in token!");
 
-        var user = await _userRepository.GetUserByUsernameAsync(username);
+        var user = await _userRepository.GetUserByUserNameAsync(username);
         if (user == null) return BadRequest("Counld not find user!");
 
         _mapper.Map(memberUpdateDto, user);
@@ -67,7 +67,7 @@ public class UsersController : BaseApiController
     [HttpPost("add-photo")]
     public async Task<ActionResult<PhotoDto>> AddPhoto(IFormFile file)
     {
-        var user = await _userRepository.GetUserByUsernameAsync(User.GetUserName());
+        var user = await _userRepository.GetUserByUserNameAsync(User.GetUserName());
 
         if (user == null) return BadRequest("Cannot update user");
 
@@ -95,7 +95,7 @@ public class UsersController : BaseApiController
     public async Task<ActionResult> SetMainPhoto(int photoId)
     {
         //  tim tai khoan dang dang nhap
-        var user = await _userRepository.GetUserByUsernameAsync(User.GetUserName());
+        var user = await _userRepository.GetUserByUserNameAsync(User.GetUserName());
         if (user == null) return BadRequest("Cannot update user");
 
         // tìm ảnh trong user dựa theo id
@@ -118,7 +118,7 @@ public class UsersController : BaseApiController
     public async Task<ActionResult> DeletePhoto(int photoId)
     {
         //  tim tai khoan dang dang nhap
-        var user = await _userRepository.GetUserByUsernameAsync(User.GetUserName());
+        var user = await _userRepository.GetUserByUserNameAsync(User.GetUserName());
         if (user == null) return BadRequest("Cannot update user");
         // tìm ảnh trong user dựa theo id
         var photo = user.Photos.FirstOrDefault(x => x.Id == photoId);

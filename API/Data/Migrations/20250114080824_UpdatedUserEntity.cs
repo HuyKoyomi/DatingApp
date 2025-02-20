@@ -14,7 +14,7 @@ namespace API.Data.Migrations
             migrationBuilder.RenameColumn(
                 name: "UserName",
                 table: "Users",
-                newName: "Username");
+                newName: "UserName");
 
             migrationBuilder.AddColumn<string>(
                 name: "City",
@@ -158,7 +158,7 @@ namespace API.Data.Migrations
                 table: "Users");
 
             migrationBuilder.RenameColumn(
-                name: "Username",
+                name: "UserName",
                 table: "Users",
                 newName: "UserName");
         }

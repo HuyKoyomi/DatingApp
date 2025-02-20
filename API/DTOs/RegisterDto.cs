@@ -6,7 +6,7 @@ public class RegisterDto
 {
     [Required]
     // [MaxLength(100)]
-    public string Username { get; set; } = string.Empty;
+    public string UserName { get; set; } = string.Empty;
 
     [Required]
     public string? Gender { get; set; }

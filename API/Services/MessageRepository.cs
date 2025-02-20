@@ -34,31 +34,31 @@ public class MessageRepository(DataContext context, IMapper mapper) : IMessageRe
 
         query = messageParams.Container switch
         {
-            "Inbox" => query.Where(x => x.Recipient.Username == messageParams.Username && x.RecipientDeleted == false), // Lấy các tin nhắn đến
-            "Outbox" => query.Where(x => x.Sender.Username == messageParams.Username && x.SenderDeleted == false), // Lấy các tin nhắn gửi
-            _ => query.Where(x => x.Recipient.Username == messageParams.Username && x.DateRead == null && x.RecipientDeleted == false)
+            "Inbox" => query.Where(x => x.Recipient.UserName == messageParams.UserName && x.RecipientDeleted == false), // Lấy các tin nhắn đến
+            "Outbox" => query.Where(x => x.Sender.UserName == messageParams.UserName && x.SenderDeleted == false), // Lấy các tin nhắn gửi
+            _ => query.Where(x => x.Recipient.UserName == messageParams.UserName && x.DateRead == null && x.RecipientDeleted == false)
         };
 
         var messages = query.ProjectTo<MessageDto>(mapper.ConfigurationProvider);
         return await PagedList<MessageDto>.CreateAsync(messages, messageParams.PageNumber, messageParams.PageSize);
     }
 
-    public async Task<IEnumerable<MessageDto>> GetMessageThread(string currentUsername, string recipientUsername)
+    public async Task<IEnumerable<MessageDto>> GetMessageThread(string currentUserName, string recipientUserName)
     {
         // Lấy ra danh sách các tin nhắn trao đổi giữa hai người dùng (người hiện tại và người nhận)
         var messages = await context.Messages
             .Include(x => x.Sender).ThenInclude(x => x.Photos)
             .Include(x => x.Recipient).ThenInclude(x => x.Photos)
             .Where(x =>
-                x.RecipientUsername == currentUsername && x.RecipientDeleted == false && x.SenderUsername == recipientUsername ||
-                x.SenderUsername == currentUsername && x.SenderDeleted == false && x.RecipientUsername == recipientUsername
+                x.RecipientUserName == currentUserName && x.RecipientDeleted == false && x.SenderUserName == recipientUserName ||
+                x.SenderUserName == currentUserName && x.SenderDeleted == false && x.RecipientUserName == recipientUserName
             )
             .OrderBy(x => x.MessageSent) // sắp xếp theo thứ tự thời gian gửi
             .ToListAsync();
 
         // Đánh dấu các tin nhắn chưa đọc 
         var unreadMess = messages.Where(x => x.DateRead == null &&
-          x.RecipientUsername == currentUsername
+          x.RecipientUserName == currentUserName
         ).ToList();
 
         // cập nhật tất cả các tin nhắn thành đã đọc

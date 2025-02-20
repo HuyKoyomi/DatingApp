@@ -25,7 +25,7 @@ public class Seed
         foreach (var user in users)
         {
             using var hmac = new HMACSHA512();
-            user.Username = user.Username.ToLower();
+            user.UserName = user.UserName.ToLower();
             context.Users.Add(user); // thêm đối tượng user vào bảng Users trong cơ sở dữ liệu.
         }
         await context.SaveChangesAsync(); // Lưu thay đổi vào cơ sở dữ liệu một cách bất đồng bộ.

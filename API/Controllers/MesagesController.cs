@@ -29,13 +29,13 @@ public class MessagesController : BaseApiController
     {
         var username = User.GetUserName();
 
-        if (username == createMessageDto.RecipientUsername)
+        if (username == createMessageDto.RecipientUserName)
         {
             return BadRequest("You cannot message yourself");
         }
 
-        var sender = await _userRepo.GetUserByUsernameAsync(username);
-        var recipient = await _userRepo.GetUserByUsernameAsync(createMessageDto.RecipientUsername);
+        var sender = await _userRepo.GetUserByUserNameAsync(username);
+        var recipient = await _userRepo.GetUserByUserNameAsync(createMessageDto.RecipientUserName);
 
         if (sender == null || recipient == null) return BadRequest("Cannot send message at this time");
 
@@ -43,8 +43,8 @@ public class MessagesController : BaseApiController
         {
             Sender = sender,
             Recipient = recipient,
-            SenderUsername = sender.UserName,
-            RecipientUsername = recipient.UserName,
+            SenderUserName = sender.UserName,
+            RecipientUserName = recipient.UserName,
             Content = createMessageDto.Content,
         };
 
@@ -57,7 +57,7 @@ public class MessagesController : BaseApiController
     [HttpGet()]
     public async Task<ActionResult<IEnumerable<MessageDto>>> GetMessagesForUser([FromQuery] MessageParams messageParams)
     {
-        messageParams.Username = User.GetUserName();
+        messageParams.UserName = User.GetUserName();
         var message = await _messRepo.GetMessagesForUser(messageParams);
 
         Response.AddPaginationHeader(message);
@@ -68,8 +68,8 @@ public class MessagesController : BaseApiController
     [HttpGet("thread/{username}")]
     public async Task<ActionResult<IEnumerable<MessageDto>>> GetMessageThread(string username)
     {
-        var currentUsername = User.GetUserName();
-        return Ok(await _messRepo.GetMessageThread(currentUsername, username));
+        var currentUserName = User.GetUserName();
+        return Ok(await _messRepo.GetMessageThread(currentUserName, username));
     }
 
     [HttpDelete("{id}")]
@@ -81,13 +81,13 @@ public class MessagesController : BaseApiController
 
         if (message == null) return BadRequest("Cannot delete this message");
 
-        if (message.SenderUsername != username && message.RecipientUsername != username)
+        if (message.SenderUserName != username && message.RecipientUserName != username)
         {
             return Forbid();
         }
-        if (message.SenderUsername == username) message.SenderDeleted = true;
+        if (message.SenderUserName == username) message.SenderDeleted = true;
 
-        if (message.RecipientUsername == username) message.RecipientDeleted = true;
+        if (message.RecipientUserName == username) message.RecipientDeleted = true;
 
         if (message is
             {

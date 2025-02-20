@@ -15,13 +15,13 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
     public async Task<MemberDto?> GetMemberAsync(string username)
     {
         return await context.Users
-        .Where(x => x.Username == username).ProjectTo<MemberDto>(mapper.ConfigurationProvider).SingleOrDefaultAsync();
+        .Where(x => x.UserName == username).ProjectTo<MemberDto>(mapper.ConfigurationProvider).SingleOrDefaultAsync();
     }
     public async Task<PagedList<MemberDto>> GetMembersAsync(UserParams userParams)
     {
         // Tạo truy vấn từ bảng Users
         var query = context.Users.AsQueryable(); // Chuyển DbSet<User> thành IQueryable<User>. => IQueryable hỗ trợ truy vấn LINQ động và trì hoãn thực thi (deferred execution).
-        query = query.Where(x => x.Username != userParams.CurrentUserName);
+        query = query.Where(x => x.UserName != userParams.CurrentUserName);
 
         // Thêm điều kiện lọc vào query để chỉ lấy những user có giới tính giống
         if (userParams.Gender != null)
@@ -50,9 +50,9 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
         return await context.Users.FindAsync(id);
     }
 
-    public async Task<AppUser?> GetUserByUsernameAsync(string username)
+    public async Task<AppUser?> GetUserByUserNameAsync(string username)
     {
-        return await context.Users.Include(x => x.Photos).SingleOrDefaultAsync(x => x.Username == username);
+        return await context.Users.Include(x => x.Photos).SingleOrDefaultAsync(x => x.UserName == username);
     }
 
     public async Task<IEnumerable<AppUser>> GetUsersAsync()
