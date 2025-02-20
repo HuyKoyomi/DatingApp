@@ -61,6 +61,11 @@
   - drop table and run again
 
 - 204. Adding the roles to the JWT token
+
   - theem roles trong tokenService
+
+- 205. Adding policy based authorisation
+  - cấu hình _IdentitySvcExtensions.cs_
+  - Tạo file _AdminController_
 
 3. FE

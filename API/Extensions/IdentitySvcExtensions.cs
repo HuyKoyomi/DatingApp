@@ -31,6 +31,11 @@ namespace API.Extensions
                     ValidateAudience = false
                 };
             });
+
+            // Cấu hình Authorization => yêu cầu user phải có role cụ thể mới truy cập được
+            services.AddAuthorizationBuilder()
+                .AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"))
+                .AddPolicy("ModeratePhotoRole", policy => policy.RequireRole("Admin", "Moderation"));
             return services;
         }
     }
