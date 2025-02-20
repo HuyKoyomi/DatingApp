@@ -65,7 +65,11 @@
   - theem roles trong tokenService
 
 - 205. Adding policy based authorisation
+
   - cấu hình _IdentitySvcExtensions.cs_
   - Tạo file _AdminController_
+
+- 206. Getting the users with roles
+- 207. Editing user roles
 
 3. FE
