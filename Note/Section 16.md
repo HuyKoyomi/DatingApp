@@ -49,7 +49,10 @@
   - **dotnet run** : Chạy ứng dụng => Nếu chưa có build trước đó, nó sẽ tự động chạy **dotnet build**. => Nếu đã có build rồi, nó chỉ chạy ứng dụng mà không build lại.
 
 - 201. Updating the seed method
+
   - _dotnet ef database drop_ : delet all db
   - run update lại data
+
+- 202. Updating the account controller
 
 3. FE

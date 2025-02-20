@@ -26,6 +26,7 @@ public class Seed
         foreach (var user in users)
         {
             // await userManager.CreateAsync(user, "123456");
+            user.UserName = user.UserName!.ToLower(); 
             var result = await userManager.CreateAsync(user, "Pa$$w0rd");
             if (!result.Succeeded)
             {

@@ -5,11 +5,12 @@ using API.DTOs;
 using API.Entities;
 using API.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
-public class AccountController(DataContext context, ITokenService tokenService, IMapper mapper) : BaseApiController
+public class AccountController(UserManager<AppUser> userManager, ITokenService tokenService, IMapper mapper) : BaseApiController
 {
     [HttpPost("register")]
     public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
@@ -23,8 +24,8 @@ public class AccountController(DataContext context, ITokenService tokenService, 
 
         var user = mapper.Map<AppUser>(registerDto);
 
-        context.Users.Add(user); // thêm đối tượng user vào bảng Users trong cơ sở dữ liệu.
-        await context.SaveChangesAsync(); // Lưu thay đổi vào cơ sở dữ liệu một cách bất đồng bộ.
+        var result = await userManager.CreateAsync(user, registerDto.Password);
+        if (!result.Succeeded) return BadRequest(result.Errors);
         return new UserDto
         {
             UserName = user.UserName,
@@ -37,14 +38,17 @@ public class AccountController(DataContext context, ITokenService tokenService, 
     [HttpPost("login")]
     public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
     {
-        var user = await context.Users
+        var user = await userManager.Users
         .Include(p => p.Photos)
-        .FirstOrDefaultAsync(x => x.UserName == loginDto.UserName.ToLower());
+            .FirstOrDefaultAsync(x => x.NormalizedUserName == loginDto.UserName.ToUpper());
 
         if (user == null || user.UserName == null)
         {
             return BadRequest("Invalid username");
         }
+        var result = await userManager.CheckPasswordAsync(user, loginDto.Password);
+
+        if (!result) return Unauthorized();
 
         return new UserDto
         {
@@ -58,6 +62,6 @@ public class AccountController(DataContext context, ITokenService tokenService, 
 
     private async Task<bool> UserExists(string username)
     {
-        return await context.Users.AnyAsync(x => x.NormalizedUserName == username.ToLower());
+        return await userManager.Users.AnyAsync(x => x.NormalizedUserName == username.ToUpper());
     }
 }
