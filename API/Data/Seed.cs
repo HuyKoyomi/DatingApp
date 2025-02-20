@@ -9,7 +9,7 @@ namespace API.Data;
 
 public class Seed
 {
-    public static async Task SeedUsers(UserManager<AppUser> userManager)
+    public static async Task SeedUsers(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager)
     {
         // Đọc thông tinn từ file json
         if (await userManager.Users.AnyAsync()) return;
@@ -17,25 +17,36 @@ public class Seed
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         var users = JsonSerializer.Deserialize<List<AppUser>>(userData, options);
 
-        if (users == null)
+        if (users == null) return;
+        var roles = new List<AppRole>
         {
-            return;
+            new () {Name = "Member"},
+            new () {Name = "Admin"},
+            new () {Name = "Moderator"},
+        };
+
+        foreach (var role in roles)
+        {
+            await roleManager.CreateAsync(role);
         }
 
         // Tạo pasword cho các user
         foreach (var user in users)
         {
-            // await userManager.CreateAsync(user, "123456");
-            user.UserName = user.UserName!.ToLower(); 
-            var result = await userManager.CreateAsync(user, "Pa$$w0rd");
-            if (!result.Succeeded)
-            {
-                foreach (var error in result.Errors)
-                {
-                    Console.WriteLine($"Error: {error.Description}");
-                }
-            }
-
+            user.UserName = user.UserName!.ToLower();
+            await userManager.CreateAsync(user, "Pa$$w0rd");
+            await userManager.AddToRoleAsync(user, "Member");
         }
+
+        var admin = new AppUser
+        {
+            UserName = "admin",
+            KnownAs = "Admin",
+            Gender = "",
+            City = "",
+            Country = ""
+        };
+        await userManager.CreateAsync(admin, "Pa$$w0rd");
+        await userManager.AddToRolesAsync(admin, ["Admin", "Moderator"]);
     }
 }
