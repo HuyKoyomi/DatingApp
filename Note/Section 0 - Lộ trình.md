@@ -63,3 +63,12 @@
 1. More Many to many to many relationships
 2. Using query params in Angular
 3. Using route resolvers in Angular
+
+## **Section 16 summary** - Identity and role managenment
+
+1. Using .Net indentity
+2. Role management
+3. Policy based authorisation
+4. UserManager<T>
+5. SignInManager<T>
+6. RoleManager<T>

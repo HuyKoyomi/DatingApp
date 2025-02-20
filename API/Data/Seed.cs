@@ -26,8 +26,6 @@ public class Seed
         {
             using var hmac = new HMACSHA512();
             user.Username = user.Username.ToLower();
-            user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("123456"));
-            user.PasswordSalt = hmac.Key;
             context.Users.Add(user); // thêm đối tượng user vào bảng Users trong cơ sở dữ liệu.
         }
         await context.SaveChangesAsync(); // Lưu thay đổi vào cơ sở dữ liệu một cách bất đồng bộ.
