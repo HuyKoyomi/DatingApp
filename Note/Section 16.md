@@ -105,5 +105,8 @@
   - **ng g s \_services/admin --skip-tests**
 
 - 212. Setting up modals
+
   - cấu hình **app.config.ts** - thêm _ModalModule_
   - **ng g c modals/roles-modal --skip-tests**
+
+- 213. Editing roles in the client
