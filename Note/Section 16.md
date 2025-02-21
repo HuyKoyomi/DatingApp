@@ -73,3 +73,14 @@
 - 207. Editing user roles
 
 3. FE
+
+- 208. Adding an admin component
+
+  - **"ng g c admin/admin-panel --skip-tests"**
+  - cấu hình trong _router_
+
+- 209. Adding an admin guard
+  - **ng g guard \_guard/admin --skip-tests**
+    - **ng**: Lệnh của Angular CLI.
+    - **g**: (viết tắt của generate): Dùng để tạo một thành phần (component, service, guard, pipe, v.v.).
+    - **guard**: Tạo một Angular Guard, dùng để bảo vệ route (chặn hoặc cho phép truy cập)
