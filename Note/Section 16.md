@@ -80,7 +80,18 @@
   - cấu hình trong _router_
 
 - 209. Adding an admin guard
+
   - **ng g guard \_guard/admin --skip-tests**
     - **ng**: Lệnh của Angular CLI.
     - **g**: (viết tắt của generate): Dùng để tạo một thành phần (component, service, guard, pipe, v.v.).
     - **guard**: Tạo một Angular Guard, dùng để bảo vệ route (chặn hoặc cho phép truy cập)
+
+- 210. Adding a custom directive
+  - **ng g d \_directives/has-role --dry-run**
+    - **ng**: Lệnh Angular CLI.
+    - **g**: Viết tắt của generate, tức là tạo một file hoặc một thành phần trong dự án Angular.
+    - **d**: Viết tắt của directive, tức là tạo một directive.
+    - **--dry-run**: Chỉ chạy mô phỏng mà không thực sự tạo file. Điều này giúp kiểm tra xem các file nào sẽ được tạo mà không làm thay đổi mã nguồn.
+  - => thêm file _HasRoleDirective_
+  - gọi và sử dụng với _NavComponent_
+  - thêm thuộc tính _\*appHasRole="['Admin', 'Moderator']"_ vào thẻ link để nếu ko có quyền thì ko hiển thị
