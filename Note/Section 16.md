@@ -87,6 +87,7 @@
     - **guard**: Tạo một Angular Guard, dùng để bảo vệ route (chặn hoặc cho phép truy cập)
 
 - 210. Adding a custom directive
+
   - **ng g d \_directives/has-role --dry-run**
     - **ng**: Lệnh Angular CLI.
     - **g**: Viết tắt của generate, tức là tạo một file hoặc một thành phần trong dự án Angular.
@@ -95,3 +96,10 @@
   - => thêm file _HasRoleDirective_
   - gọi và sử dụng với _NavComponent_
   - thêm thuộc tính _\*appHasRole="['Admin', 'Moderator']"_ vào thẻ link để nếu ko có quyền thì ko hiển thị
+
+- 211. Adding the edit roles component
+
+  - **ng g c admin/user-management --skip-tests**
+  - **ng g c admin/photo-management --skip-tests**
+
+  - **ng g s \_services/admin --skip-tests**
