@@ -32,8 +32,14 @@
 ## II. BE
 
 - 217. Adding a presence hub
+
   - Tạo folder **SignalR**
   - Tạo file Hub: để quản lý kết nối online/offline
   - Cấu hình trong ApplicationSvcExtensions
   - Cấu hình trong **Program.cs** đăng ký Hub SignalR trong ứng dụng ASP.NET Core.
+
+- 218. Authenticating to SignalR
+  - Xác thực Token từ Query String cho SignalR trong file _IdentitySvcExtensions_
+  - Cấu hình Progaram.cs - AllowCredentials() → Cho phép cookies, tokens, hoặc thông tin xác thực khác được gửi giữa frontend và backend.
+
 ## III. FE
