@@ -72,3 +72,9 @@
 4. UserManager<T>
 5. SignInManager<T>
 6. RoleManager<T>
+
+## **Section 17 summary** - Identity and role managenment
+
+1. Use and set up SignalR on bolth the API and the client
+2. Implement online presence
+3. implement live chat between users
