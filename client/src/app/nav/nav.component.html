@@ -31,7 +31,7 @@
         }}" alt="" />
       <a dropdownToggle class="dropdown-toggle text-light text-decoration-none">
         Welcome {{ accountService.currentUser()?.knowAs | titlecase }}
-        <!-- Welcome {{user.username | titlecase }} -->
+        <!-- Welcome {{user.userName | titlecase }} -->
       </a>
       <div *dropdownMenu class="dropdown-menu">
         <a routerLink="/member/edit" class="dropdown-item">Edit profile</a>
@@ -41,7 +41,7 @@
     </div>
     } @if (!accountService.currentUser()){
     <form class="d-flex" #loginForm="ngForm" (ngSubmit)="login()">
-      <input name="username" [(ngModel)]="model.username" class="form-control me-2" placeholder="Username" />
+      <input name="userName" [(ngModel)]="model.userName" class="form-control me-2" placeholder="Username" />
       <input name="password" [(ngModel)]="model.password" class="form-control me-2" placeholder="Password" />
       <button class="btn btn-success" type="submit">Login</button>
     </form>

@@ -23,7 +23,7 @@ export const routes: Routes = [
     children: [
       { path: 'members', component: MemberListComponent },
       {
-        path: 'members/:username',
+        path: 'members/:userName',
         component: MemberDetailComponent,
         resolve: { member: memberDetailedResolver },
       },

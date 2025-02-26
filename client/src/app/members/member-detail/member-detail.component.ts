@@ -54,7 +54,7 @@ export class MemberDetailComponent implements OnInit {
       this.messages.length === 0 &&
       this.member
     ) {
-      this.messSvc.getMessageThread(this.member.username).subscribe({
+      this.messSvc.getMessageThread(this.member.userName).subscribe({
         next: (messages) => (this.messages = messages),
       });
     }
@@ -68,9 +68,9 @@ export class MemberDetailComponent implements OnInit {
   }
 
   // loadMember() {
-  //   const username = this.route.snapshot.paramMap.get('username'); // lay bien username tren router
-  //   if (!username) return;
-  //   this.membersService.getMember(username).subscribe({
+  //   const userName = this.route.snapshot.paramMap.get('userName'); // lay bien userName tren router
+  //   if (!userName) return;
+  //   this.membersService.getMember(userName).subscribe({
   //     next: (member) => {
   //       this.member = member;
   //       member.photos.map((el) => {

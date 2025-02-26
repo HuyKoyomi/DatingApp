@@ -59,17 +59,17 @@ export class MembersService {
       });
   }
 
-  getMember(username: string) {
+  getMember(userName: string) {
     const member: Member = [...this.memberCache.values()]
       .reduce((arr, elem) => arr.concat(elem.body), [])
-      .find((m: Member) => m.username === username);
+      .find((m: Member) => m.userName === userName);
     console.log(member);
     if (member) return of(member);
     // //  kiểm tra xem member có trong list hiện tại hay không
-    // const member = this.members().find((x) => x.username == username);
+    // const member = this.members().find((x) => x.userName == userName);
     // if (member) return of(member); // of() là một phương thức của rxjs, dùng để tạo một Observable từ một giá trị đơn lẻ
     // nếu không call api
-    return this.http.get<Member>(this.baseUrl + 'users/' + username);
+    return this.http.get<Member>(this.baseUrl + 'users/' + userName);
     // => dữ liệu trả ra là 1 Observable
   }
 
@@ -81,7 +81,7 @@ export class MembersService {
       .pipe
       // tap(() => {
       //   this.members.update((members) =>
-      //     members.map((m) => (m.username == member.username ? member : m))
+      //     members.map((m) => (m.userName == member.userName ? member : m))
       //   );
       // })
       ();

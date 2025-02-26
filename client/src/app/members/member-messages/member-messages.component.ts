@@ -21,14 +21,14 @@ import { FormsModule, NgForm } from '@angular/forms';
 export class MemberMessagesComponent implements OnInit {
   @ViewChild('messageForm') messageForm?: NgForm;
   private messSVC = inject(MessageService);
-  username = input.required<string>();
+  userName = input.required<string>();
   messages = input.required<Message[]>();
   messageContent = '';
   updateMessages = output<Message>();
 
   ngOnInit(): void {}
   sendMessage() {
-    this.messSVC.sendMessage(this.username(), this.messageContent).subscribe({
+    this.messSVC.sendMessage(this.userName(), this.messageContent).subscribe({
       next: (message) => {
         this.updateMessages.emit(message);
         this.messageForm?.reset();

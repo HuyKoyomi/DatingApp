@@ -5,7 +5,7 @@
     <label>Who is your favorite user?</label>
     <select name="" id="" class="form-select">
       @for (user of usersFromHomeToComponent(); track $index) {
-      <option [value]="user.username">{{ user.username }}</option>
+      <option [value]="user.userName">{{ user.userName }}</option>
       }
     </select>
   </div> -->
@@ -20,7 +20,7 @@
     </label>
   </div>
 
-  <app-text-input [formControl]="$any(form.controls['username'])" [label]="'Username'"></app-text-input>
+  <app-text-input [formControl]="$any(form.controls['userName'])" [label]="'Username'"></app-text-input>
   <app-text-input [formControl]="$any(form.controls['knownAs'])" [label]="'Kown as'"></app-text-input>
   <app-date-picker [formControl]="$any(form.controls['dateOfBirth'])" [label]="'Date of birth'"
     [maxDate]="maxDate"></app-date-picker>

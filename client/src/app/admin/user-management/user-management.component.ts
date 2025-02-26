@@ -27,7 +27,7 @@ export class UserManagementComponent {
       class: 'modal-0',
       initialState: {
         title: 'User roles',
-        username: user.username,
+        userName: user.userName,
         selectedRoles: [...user.roles],
         availableRoles: ['Admin', 'Moderator', 'Member'],
         user: this.users,
@@ -39,7 +39,7 @@ export class UserManagementComponent {
       next: () => {
         if (this.bsModalRef.content && this.bsModalRef.content.rolesUpdated) {
           const selectedRoles = this.bsModalRef.content.selectedRoles;
-          this.adminService.updateUserRoles(user.username, selectedRoles).subscribe({
+          this.adminService.updateUserRoles(user.userName, selectedRoles).subscribe({
             next: roles => user.roles = roles
           })
         }

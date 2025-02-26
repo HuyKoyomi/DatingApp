@@ -9,9 +9,9 @@ export const memberDetailedResolver: ResolveFn<Member | null> = (
 ) => {
   const memberService = inject(MembersService);
 
-  const username = route.paramMap.get('username');
+  const userName = route.paramMap.get('userName');
 
-  if (!username) return null;
+  if (!userName) return null;
 
-  return memberService.getMember(username);
+  return memberService.getMember(userName);
 };
