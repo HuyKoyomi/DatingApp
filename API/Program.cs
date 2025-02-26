@@ -2,6 +2,7 @@ using API;
 using API.Data;
 using API.Entities;
 using API.Extensions;
+using API.SignalR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,6 +21,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<PresenceHub>("hubs/presence");
 
 using var scope = app.Services.CreateScope(); // Tạo scope dịch vụ
 var services = scope.ServiceProvider; // Lấy ServiceProvider từ scope để truy cập các dịch vụ cần thiết

@@ -31,4 +31,9 @@
 
 ## II. BE
 
+- 217. Adding a presence hub
+  - Tạo folder **SignalR**
+  - Tạo file Hub: để quản lý kết nối online/offline
+  - Cấu hình trong ApplicationSvcExtensions
+  - Cấu hình trong **Program.cs** đăng ký Hub SignalR trong ứng dụng ASP.NET Core.
 ## III. FE
