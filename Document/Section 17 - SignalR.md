@@ -63,6 +63,7 @@
   - Cấu hình trong _DataContext.cs_
   - Add function and gọi lệnh tạo bảng
     - **dotnet ef migrations add GroupsAdded**
+- 228. Updating the message hub with group tracking
 
 ## III. FE
 

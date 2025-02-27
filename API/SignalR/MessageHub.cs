@@ -19,6 +19,7 @@ public class MessageHub(IMessageRepository messageRepository, IUserRepository us
         if (Context.User == null || string.IsNullOrEmpty(otherUser)) throw new Exception("Cannot join group"); // Kiểm tra xem Context.User có tồn tại hay không
         var groupName = GetGroupName(Context.User.GetUserName(), otherUser); // tạo một tên nhóm trò chuyện duy nhất giữa hai người dùng
         await Groups.AddToGroupAsync(Context.ConnectionId, groupName); // Thêm client vào nhóm trò chuyện
+        await AddToGroup(groupName);
 
         var messages = await messageRepository.GetMessageThread(Context.User.GetUserName(), otherUser!); // Lấy lịch sử tin nhắn giữa hai người
         await Clients.Group(groupName).SendAsync("ReceiveMessageThread", messages); // Gửi lịch sử tin nhắn về client
@@ -26,6 +27,7 @@ public class MessageHub(IMessageRepository messageRepository, IUserRepository us
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
+        await RemoveFromMessageGroup();
         await base.OnDisconnectedAsync(exception);
     }
 
@@ -54,12 +56,46 @@ public class MessageHub(IMessageRepository messageRepository, IUserRepository us
             Content = createMessageDto.Content,
         };
 
+        var groupName = GetGroupName(sender.UserName, recipient.UserName);
+        var group = await messageRepository.GetMessageGroup(groupName);
+        if (group != null && group.Connections.Any(x => x.Username == recipient.UserName))
+        {
+            message.DateRead = DateTime.UtcNow;
+        }
+
         messageRepository.AddMessage(message); // Gọi phương thức AddMessage() từ messageRepository để lưu tin nhắn vào database.
 
         if (await messageRepository.SaveAllAsync())
         {
-            var group = GetGroupName(sender.UserName, recipient.UserName); // Tạo tên nhóm trò chuyện giữa sender và recipient.
-            await Clients.Group(group).SendAsync("NewMessage", mapper.Map<MessageDto>(message)); // Gửi tin nhắn (message) đến tất cả thành viên trong nhóm
+            await Clients.Group(groupName).SendAsync("NewMessage", mapper.Map<MessageDto>(message)); // Gửi tin nhắn (message) đến tất cả thành viên trong nhóm
+        }
+    }
+
+    // Phương thức này dùng để thêm một kết nối (connection) vào một nhóm (group).
+    private async Task<bool> AddToGroup(string groupName)
+    {
+        var userName = Context.User?.GetUserName() ?? throw new Exception("Cannnot get userName");
+
+        var group = await messageRepository.GetMessageGroup(groupName); // Truy vấn nhóm (group) từ cơ sở dữ liệu dựa trên groupName.
+        var connection = new Connection { ConnectionId = Context.ConnectionId, Username = userName };
+
+        if (group == null)
+        {
+            group = new Group { Name = groupName };
+            messageRepository.AddGroup(group); // Nếu chưa có nhóm, sẽ tạo nhóm mới.
+        }
+        group.Connections.Add(connection); // Thêm kết nối vào nhóm
+        return await messageRepository.SaveAllAsync();
+    }
+
+    // Phương thức này dùng để xóa một kết nối khỏi nhóm tin nhắn.
+    private async Task RemoveFromMessageGroup()
+    {
+        var connection = await messageRepository.GetConnection(Context.ConnectionId);
+        if (connection != null)
+        {
+            messageRepository.RemoveConncetion(connection); // Xóa kết nối nếu tồn tại
+            await messageRepository.SaveAllAsync();
         }
     }
 

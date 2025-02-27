@@ -23,7 +23,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapHub<PresenceHub>("hubs/presence");
-app.MapHub< MessageHub>("hubs/message");
+app.MapHub<MessageHub>("hubs/message");
 
 using var scope = app.Services.CreateScope(); // Tạo scope dịch vụ
 var services = scope.ServiceProvider; // Lấy ServiceProvider từ scope để truy cập các dịch vụ cần thiết
@@ -34,6 +34,7 @@ try
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
     var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
     await context.Database.MigrateAsync();
+    await context.Database.ExecuteSqlRawAsync("DELETE FROM [Connections]"); // xóa toàn bộ dữ liệu trong bảng [Connections] của cơ sở dữ liệu
     await Seed.SeedUsers(userManager, roleManager);
 }
 catch (Exception ex)
