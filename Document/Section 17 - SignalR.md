@@ -68,4 +68,7 @@
   - từ accountSvc => gọi 2 hàm trên
 
 - 224. Adding the hub connection to the message service
+
   - tạo hàm **createHubConnection** trong _mesage.services.ts_
+
+- 225. Refactoring the message components to use the hub

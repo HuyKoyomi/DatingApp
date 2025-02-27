@@ -63,7 +63,6 @@ export class MembersService {
     const member: Member = [...this.memberCache.values()]
       .reduce((arr, elem) => arr.concat(elem.body), [])
       .find((m: Member) => m.userName === userName);
-    console.log(member);
     if (member) return of(member);
     // //  kiểm tra xem member có trong list hiện tại hay không
     // const member = this.members().find((x) => x.userName == userName);

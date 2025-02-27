@@ -23,7 +23,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapHub<PresenceHub>("hubs/presence");
-app.MapHub<PresenceHub>("hubs/message");
+app.MapHub< MessageHub>("hubs/message");
 
 using var scope = app.Services.CreateScope(); // Tạo scope dịch vụ
 var services = scope.ServiceProvider; // Lấy ServiceProvider từ scope để truy cập các dịch vụ cần thiết
