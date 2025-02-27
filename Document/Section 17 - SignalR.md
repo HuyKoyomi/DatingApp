@@ -44,17 +44,21 @@
   - Cấu hình Progaram.cs - AllowCredentials() → Cho phép cookies, tokens, hoặc thông tin xác thực khác được gửi giữa frontend và backend.
 
 - 220. Adding a presence tracker
+
   - Thêm file **PresenceTracker.cs** // lưu danh sách các kết nối đang hoạt động
   - Thêm dịch vụ vào "ApplicationSvcExtensions" để sử dụng
   - gọi vào trong **PresenceHub.cs**
 
+- 222. Creating a message hub
+  - Tạo file **MessageHub.cs** để quản lý kết nối thời gian thực giữa client và server.
+  - Thêm vào **Program.cs**
+
 ## III. FE
 
 - 219. Client side SignalR
+
   - cài đặt thư viện **yarn add @microsoft/signalr**
   - thêm biến môi trường **hubsUrl: "https://localhost:5000/hubs/"**
   - Tạo file xử lý PresenceService **ng g s \_services/presence --skip-tests**
     - thềm hàm xử lý _createHubConnection_ và _stopHubConnect_
   - từ accountSvc => gọi 2 hàm trên
-
-- 221. Displaying online presence
