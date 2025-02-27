@@ -55,6 +55,7 @@
   - Thêm vào **Program.cs**
 
 - 223. Adding the send message method to the hub
+
   - Tạo hàm SendMessage trong file **MessageHub.cs** để gửi dữ liệu
 
 ## III. FE
@@ -72,3 +73,5 @@
   - tạo hàm **createHubConnection** trong _mesage.services.ts_
 
 - 225. Refactoring the message components to use the hub
+
+- 226. Sending messages via the hub
