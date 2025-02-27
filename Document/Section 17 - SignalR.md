@@ -58,6 +58,12 @@
 
   - Tạo hàm SendMessage trong file **MessageHub.cs** để gửi dữ liệu
 
+- 227. Tracking the message groups
+  - Tạo file _Group.cs_, _Connection.cs_
+  - Cấu hình trong _DataContext.cs_
+  - Add function and gọi lệnh tạo bảng
+    - **dotnet ef migrations add GroupsAdded**
+
 ## III. FE
 
 - 219. Client side SignalR

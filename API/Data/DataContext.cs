@@ -11,7 +11,8 @@ IdentityUserClaim<int>, AppUserRole, IdentityUserLogin<int>, IdentityRoleClaim<i
 {
     public DbSet<UserLike> Likes { get; set; }
     public DbSet<Message> Messages { get; set; }
-
+    public DbSet<Group> Groups { get; set; }
+    public DbSet<Connection> Connections { get; set; }
 
     // tạo model từ các entity classes + cấu hình các ràng buộc, quan hệ giữa các bảng
     protected override void OnModelCreating(ModelBuilder builder)
