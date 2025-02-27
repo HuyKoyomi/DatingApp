@@ -8,6 +8,7 @@ import { Message } from '../../_models/message';
 import { MessageService } from '../../_services/message.service';
 import { DatePipe } from '@angular/common';
 import { TimeagoModule } from 'ngx-timeago';
+import { PresenceService } from '../../_services/presence.service';
 // import { GalleryItem, GalleryModule, ImageItem } from 'ng-gallery';
 
 @Component({
@@ -19,7 +20,7 @@ import { TimeagoModule } from 'ngx-timeago';
 })
 export class MemberDetailComponent implements OnInit {
   @ViewChild('memberTabs', { static: true }) memberTabs?: TabsetComponent;
-  private membersService = inject(MembersService);
+  presenceService = inject(PresenceService);
   private messSvc = inject(MessageService);
   private route = inject(ActivatedRoute); // laay router hien tai
   member: Member = {} as Member;
