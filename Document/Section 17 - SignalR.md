@@ -67,6 +67,8 @@
 
 - 229. Dealing with UTC date formats
 
+- 230. Notifying users when they receive a message
+
 ## III. FE
 
 - 219. Client side SignalR
