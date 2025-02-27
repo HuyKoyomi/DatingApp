@@ -7,14 +7,34 @@ import {
   setPaginationHeaders,
   setPaginationResponse,
 } from './paginationHelper';
+import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
+import { User } from '../_models/user';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MessageService {
-  private http = inject(HttpClient);
   baseUrl = environment.apiUrl;
+  hubUrl = environment.hubsUrl;
+  private hubConnection?: HubConnection;
+  private http = inject(HttpClient);
   paginatedResult = signal<PaginatedResult<Message[]> | null>(null);
+  messageThread = signal<Message[]>([]);
+
+  createHubConnection(use: User, otherUserName: string) {
+    this.hubConnection = new HubConnectionBuilder()
+      .withUrl(this.hubUrl + "messages?user=" + otherUserName, {
+        accessTokenFactory: () => use.token
+      })
+      .withAutomaticReconnect()
+      .build();
+
+    this.hubConnection.start().catch(err => console.log(err))
+    this.hubConnection.on('ReceiveMessageThread', message => {
+      this.messageThread.set(message);
+    })
+
+  }
 
   getMessages(container: string, pageNumber: number, pageSize: number) {
     let params = setPaginationHeaders(pageNumber, pageSize);
