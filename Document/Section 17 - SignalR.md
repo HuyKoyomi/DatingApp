@@ -50,8 +50,12 @@
   - gọi vào trong **PresenceHub.cs**
 
 - 222. Creating a message hub
+
   - Tạo file **MessageHub.cs** để quản lý kết nối thời gian thực giữa client và server.
   - Thêm vào **Program.cs**
+
+- 223. Adding the send message method to the hub
+  - Tạo hàm SendMessage trong file **MessageHub.cs** để gửi dữ liệu
 
 ## III. FE
 

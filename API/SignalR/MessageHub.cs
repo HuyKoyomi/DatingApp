@@ -1,11 +1,14 @@
+using API.DTOs;
+using API.Entities;
 using API.Extensions;
 using API.Interfaces;
+using AutoMapper;
 using Microsoft.AspNetCore.SignalR;
 
 namespace API.SignalR;
 
 // quản lý kết nối thời gian thực giữa client và server
-public class MessageHub(IMessageRepository messageRepository) : Hub
+public class MessageHub(IMessageRepository messageRepository, IUserRepository userRepository, IMapper mapper) : Hub
 {
 
     public override async Task OnConnectedAsync()
@@ -24,6 +27,40 @@ public class MessageHub(IMessageRepository messageRepository) : Hub
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         await base.OnDisconnectedAsync(exception);
+    }
+
+    public async Task SendMessage(CreateMessageDto createMessageDto)
+    {
+        // Lấy username của người gửi
+        var username = Context.User?.GetUserName() ?? throw new HubException("Could not get user");
+
+        // Kiểm tra xem người dùng có gửi tin nhắn cho chính mình không
+        if (username == createMessageDto.RecipientUserName.ToLower())
+        {
+            throw new HubException("You cannot send messages to yourself");
+        }
+
+        var sender = await userRepository.GetUserByUserNameAsync(username);
+        var recipient = await userRepository.GetUserByUserNameAsync(createMessageDto.RecipientUserName);
+
+        if (sender == null || recipient == null || sender.UserName == null || recipient.UserName == null) throw new HubException("Cannot send message at this time");
+
+        var message = new Message
+        {
+            Sender = sender,
+            Recipient = recipient,
+            SenderUserName = sender.UserName,
+            RecipientUserName = recipient.UserName,
+            Content = createMessageDto.Content,
+        };
+
+        messageRepository.AddMessage(message); // Gọi phương thức AddMessage() từ messageRepository để lưu tin nhắn vào database.
+
+        if (await messageRepository.SaveAllAsync())
+        {
+            var group = GetGroupName(sender.UserName, recipient.UserName); // Tạo tên nhóm trò chuyện giữa sender và recipient.
+            await Clients.Group(group).SendAsync("NewMessage", mapper.Map<MessageDto>(message)); // Gửi tin nhắn (message) đến tất cả thành viên trong nhóm
+        }
     }
 
     private string GetGroupName(string caller, string? other)
