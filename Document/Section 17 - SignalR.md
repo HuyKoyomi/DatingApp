@@ -43,3 +43,10 @@
   - Cấu hình Progaram.cs - AllowCredentials() → Cho phép cookies, tokens, hoặc thông tin xác thực khác được gửi giữa frontend và backend.
 
 ## III. FE
+
+- 219. Client side SignalR
+  - cài đặt thư viện **yarn add @microsoft/signalr**
+  - thêm biến môi trường **hubsUrl: "https://localhost:5000/hubs/"**
+  - Tạo file xử lý PresenceService **ng g s \_services/presence --skip-tests**
+    - thềm hàm xử lý _createHubConnection_ và _stopHubConnect_
+  - từ accountSvc => gọi 2 hàm trên
