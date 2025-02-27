@@ -39,8 +39,14 @@
   - Cấu hình trong **Program.cs** đăng ký Hub SignalR trong ứng dụng ASP.NET Core.
 
 - 218. Authenticating to SignalR
+
   - Xác thực Token từ Query String cho SignalR trong file _IdentitySvcExtensions_
   - Cấu hình Progaram.cs - AllowCredentials() → Cho phép cookies, tokens, hoặc thông tin xác thực khác được gửi giữa frontend và backend.
+
+- 220. Adding a presence tracker
+  - Thêm file **PresenceTracker.cs** // lưu danh sách các kết nối đang hoạt động
+  - Thêm dịch vụ vào "ApplicationSvcExtensions" để sử dụng
+  - gọi vào trong **PresenceHub.cs**
 
 ## III. FE
 
