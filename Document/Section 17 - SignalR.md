@@ -65,6 +65,8 @@
     - **dotnet ef migrations add GroupsAdded**
 - 228. Updating the message hub with group tracking
 
+- 229. Dealing with UTC date formats
+
 ## III. FE
 
 - 219. Client side SignalR
