@@ -69,6 +69,8 @@
 
 - 230. Notifying users when they receive a message
 
+- 232. Optimizing the presence
+
 ## III. FE
 
 - 219. Client side SignalR

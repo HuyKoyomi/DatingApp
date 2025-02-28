@@ -14,8 +14,9 @@ public class PresenceHub(PresenceTracker tracker) : Hub
     {
         if (Context.User == null) throw new HubException("Cannot get current user claim");
 
-        await tracker.UserConnected(Context.User.GetUserName(), Context.ConnectionId); // Lấy thông tin user đang kết nối thông qua Context.User.GetUserName()
-        await Clients.Others.SendAsync("UserIsOnline", Context.User.GetUserName()); // Gửi sự kiện "UserIsOnline" đến tất cả client khác (Clients.Others), báo rằng user này đã online.
+        var isOnline = await tracker.UserConnected(Context.User.GetUserName(), Context.ConnectionId); // Lấy thông tin user đang kết nối thông qua Context.User.GetUserName()
+        if (isOnline)
+            await Clients.Others.SendAsync("UserIsOnline", Context.User.GetUserName()); // Gửi sự kiện "UserIsOnline" đến tất cả client khác (Clients.Others), báo rằng user này đã online.
 
         var currentUsers = await tracker.GetOnlineUsers(); // Lấy danh sách user đang online
         await Clients.All.SendAsync("GetOnlineUsers", currentUsers); // Gửi danh sách user online tới tất cả client
@@ -26,14 +27,13 @@ public class PresenceHub(PresenceTracker tracker) : Hub
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         if (Context.User == null) throw new HubException("Cannot get current user claim");
-        await tracker.UserDisconnected(Context.User.GetUserName(), Context.ConnectionId); // Lấy thông tin user đang kết nối thông qua Context.User.GetUserName()
+        var isOffline = await tracker.UserDisconnected(Context.User.GetUserName(), Context.ConnectionId); // Lấy thông tin user đang kết nối thông qua Context.User.GetUserName()
 
         // Gửi sự kiện "UserIsOffline" đến tất cả client khác, báo rằng user này đã offline.
-        await Clients.Others.SendAsync("UserIsOffline", Context.User?.GetUserName());
+        if (isOffline) await Clients.Others.SendAsync("UserIsOffline", Context.User?.GetUserName());
 
         // Gọi base.OnDisconnectedAsync(exception); để đảm bảo rằng SignalR xử lý đúng các hành động mặc định khi một user mất kết nối.
         await base.OnDisconnectedAsync(exception);
-
 
         var currentUsers = await tracker.GetOnlineUsers();
         await Clients.All.SendAsync("GetOnlineUsers", currentUsers);

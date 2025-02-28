@@ -5,8 +5,9 @@ public class PresenceTracker
     private static readonly Dictionary<string, List<string>> OnlineUsers = []; // lưu danh sách các kết nối đang hoạt động
 
     // Xử lý khi một user kết nối
-    public Task UserConnected(string username, string connectionId)
+    public Task<bool> UserConnected(string username, string connectionId)
     {
+        var isOnline = false;
         lock (OnlineUsers) // Dùng lock (OnlineUsers) để đảm bảo luồng (thread-safe), tránh xung đột khi nhiều user kết nối cùng lúc.   
         {
             if (OnlineUsers.ContainsKey(username))
@@ -16,27 +17,31 @@ public class PresenceTracker
             else
             {
                 OnlineUsers.Add(username, [connectionId]); // Tạo một danh sách mới và thêm connectionId
+                isOnline = true;
             }
         }
-        return Task.CompletedTask;
+        return Task.FromResult(isOnline);
     }
 
 
     // Xử lý khi một user ngắt kết nối
-    public Task UserDisconnected(string username, string connectionId)
+    public Task<bool> UserDisconnected(string username, string connectionId)
     {
+        var isOffline = false;
         lock (OnlineUsers)
         {
-            if (!OnlineUsers.ContainsKey(username)) return Task.CompletedTask;
+            if (!OnlineUsers.ContainsKey(username)) return Task.FromResult(isOffline) ;
 
             OnlineUsers[username].Remove(connectionId); // Xoá connectionId của user
 
             if (OnlineUsers[username].Count == 0)
             {
                 OnlineUsers.Remove(username); // Nếu user không còn kết nối nào, xoá khỏi OnlineUsers
+                isOffline = true;
             }
         }
-        return Task.CompletedTask;
+        return Task.FromResult(isOffline);
+
     }
 
     public Task<string[]> GetOnlineUsers()
