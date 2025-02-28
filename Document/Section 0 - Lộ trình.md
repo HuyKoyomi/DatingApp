@@ -78,3 +78,4 @@
 1. Use and set up SignalR on bolth the API and the client
 2. Implement online presence
 3. implement live chat between users
+
