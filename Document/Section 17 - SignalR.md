@@ -86,3 +86,5 @@
 - 225. Refactoring the message components to use the hub
 
 - 226. Sending messages via the hub
+
+- 231. Subscribing to route parameter changes

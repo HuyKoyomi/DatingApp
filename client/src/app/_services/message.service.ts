@@ -16,7 +16,7 @@ import { User } from '../_models/user';
 export class MessageService {
   baseUrl = environment.apiUrl;
   hubUrl = environment.hubsUrl;
-  private hubConnection?: HubConnection;
+  hubConnection?: HubConnection;
   private http = inject(HttpClient);
   paginatedResult = signal<PaginatedResult<Message[]> | null>(null);
   messageThread = signal<Message[]>([]);
