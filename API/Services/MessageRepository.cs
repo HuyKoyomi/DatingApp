@@ -31,9 +31,12 @@ public class MessageRepository(DataContext context, IMapper mapper) : IMessageRe
         return await context.Connections.FindAsync(connectionId);
     }
 
-    public Task<Group> GetGroupForConnection(string connectionId)
+    public async Task<Group?> GetGroupForConnection(string connectionId)
     {
-        throw new NotImplementedException();
+        return await context.Groups
+         .Include(x => x.Connections)
+         .Where(x => x.Connections.Any(c => c.ConnectionId == connectionId))
+         .FirstOrDefaultAsync();
     }
 
     public async Task<Message?> GetMessage(int id)
@@ -69,13 +72,12 @@ public class MessageRepository(DataContext context, IMapper mapper) : IMessageRe
     {
         // Lấy ra danh sách các tin nhắn trao đổi giữa hai người dùng (người hiện tại và người nhận)
         var messages = await context.Messages
-            .Include(x => x.Sender).ThenInclude(x => x.Photos)
-            .Include(x => x.Recipient).ThenInclude(x => x.Photos)
             .Where(x =>
                 x.RecipientUserName == currentUserName && x.RecipientDeleted == false && x.SenderUserName == recipientUserName ||
                 x.SenderUserName == currentUserName && x.SenderDeleted == false && x.RecipientUserName == recipientUserName
             )
             .OrderBy(x => x.MessageSent) // sắp xếp theo thứ tự thời gian gửi
+            .ProjectTo<MessageDto>(mapper.ConfigurationProvider)
             .ToListAsync();
 
         // Đánh dấu các tin nhắn chưa đọc 
@@ -91,7 +93,7 @@ public class MessageRepository(DataContext context, IMapper mapper) : IMessageRe
         }
 
         // đổi dữ liệu sang DTO
-        return mapper.Map<IEnumerable<MessageDto>>(messages);
+        return messages;
 
     }
 

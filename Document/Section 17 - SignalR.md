@@ -71,6 +71,8 @@
 
 - 232. Optimizing the presence
 
+- 233. Optimizing the messages
+
 ## III. FE
 
 - 219. Client side SignalR

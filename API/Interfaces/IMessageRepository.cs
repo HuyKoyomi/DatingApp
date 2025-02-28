@@ -16,5 +16,5 @@ public interface IMessageRepository
     void RemoveConncetion(Connection connection);
     Task<Connection?> GetConnection(string connectionId);
     Task<Group?> GetMessageGroup(string groupName);
-    Task<Group> GetGroupForConnection(string connectionId);
+    Task<Group?> GetGroupForConnection(string connectionId);
 }

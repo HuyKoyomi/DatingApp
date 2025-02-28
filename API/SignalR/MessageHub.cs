@@ -19,15 +19,17 @@ public class MessageHub(IMessageRepository messageRepository, IUserRepository us
         if (Context.User == null || string.IsNullOrEmpty(otherUser)) throw new Exception("Cannot join group"); // Kiểm tra xem Context.User có tồn tại hay không
         var groupName = GetGroupName(Context.User.GetUserName(), otherUser); // tạo một tên nhóm trò chuyện duy nhất giữa hai người dùng
         await Groups.AddToGroupAsync(Context.ConnectionId, groupName); // Thêm client vào nhóm trò chuyện
-        await AddToGroup(groupName);
+        var group = await AddToGroup(groupName);
+        await Clients.Group(groupName).SendAsync("UpdateGroup", group);
 
         var messages = await messageRepository.GetMessageThread(Context.User.GetUserName(), otherUser!); // Lấy lịch sử tin nhắn giữa hai người
-        await Clients.Group(groupName).SendAsync("ReceiveMessageThread", messages); // Gửi lịch sử tin nhắn về client
+        await Clients.Caller.SendAsync("ReceiveMessageThread", messages); // Gửi lịch sử tin nhắn về client
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        await RemoveFromMessageGroup();
+        var group = await RemoveFromMessageGroup();
+        await Clients.Group(group.Name).SendAsync("UpdateGroup", group);
         await base.OnDisconnectedAsync(exception);
     }
 
@@ -81,7 +83,7 @@ public class MessageHub(IMessageRepository messageRepository, IUserRepository us
     }
 
     // Phương thức này dùng để thêm một kết nối (connection) vào một nhóm (group).
-    private async Task<bool> AddToGroup(string groupName)
+    private async Task<Group> AddToGroup(string groupName)
     {
         var userName = Context.User?.GetUserName() ?? throw new Exception("Cannnot get userName");
 
@@ -94,18 +96,22 @@ public class MessageHub(IMessageRepository messageRepository, IUserRepository us
             messageRepository.AddGroup(group); // Nếu chưa có nhóm, sẽ tạo nhóm mới.
         }
         group.Connections.Add(connection); // Thêm kết nối vào nhóm
-        return await messageRepository.SaveAllAsync();
+        if (await messageRepository.SaveAllAsync()) return group;
+
+        throw new Exception("Failed to join group");
     }
 
     // Phương thức này dùng để xóa một kết nối khỏi nhóm tin nhắn.
-    private async Task RemoveFromMessageGroup()
+    private async Task<Group> RemoveFromMessageGroup()
     {
-        var connection = await messageRepository.GetConnection(Context.ConnectionId);
-        if (connection != null)
+        var group = await messageRepository.GetGroupForConnection(Context.ConnectionId);
+        var connection = group?.Connections.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
+        if (connection != null && group != null)
         {
             messageRepository.RemoveConncetion(connection); // Xóa kết nối nếu tồn tại
-            await messageRepository.SaveAllAsync();
+            if (await messageRepository.SaveAllAsync()) return group;
         }
+        throw new Exception("Failed to remove from group");
     }
 
     private string GetGroupName(string caller, string? other)

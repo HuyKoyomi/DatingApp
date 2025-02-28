@@ -20,7 +20,7 @@ export class MemberMessagesComponent {
   messageService = inject(MessageService);
   userName = input.required<string>();
   messageContent = '';
-
+  
   sendMessage() {
     this.messageService.sendMessage(this.userName(), this.messageContent).then(() => {
       this.messageForm?.reset();
